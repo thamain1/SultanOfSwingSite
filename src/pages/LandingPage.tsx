@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 
@@ -10,7 +10,20 @@ export default function LandingPage() {
   const [videoOpen, setVideoOpen] = useState(false)
 
   const openVideo = () => setVideoOpen(true)
-  const closeVideo = () => setVideoOpen(false)
+  const closeVideo = useCallback(() => {
+    setVideoOpen(false)
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }, [])
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeVideo() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [closeVideo])
 
   return (
     <div className="bg-black min-h-screen">
@@ -337,20 +350,24 @@ export default function LandingPage() {
             className="relative w-full max-w-3xl"
             onClick={e => e.stopPropagation()}
           >
+            {/* Close button — always visible inside the container */}
             <button
               onClick={closeVideo}
-              className="absolute -top-10 right-0 text-gray-400 hover:text-white text-sm tracking-widest"
               style={oswald}
+              className="absolute top-3 right-3 z-10 bg-black/70 hover:bg-orange-500 text-white text-xs tracking-widest px-3 py-2 transition-colors"
             >
-              CLOSE ✕
+              ✕ CLOSE
             </button>
             <video
               ref={videoRef}
               src="/assets/demo.mp4"
               controls
               autoPlay
-              className="w-full rounded-sm shadow-2xl"
+              className="w-full shadow-2xl"
             />
+            <p className="text-center text-gray-600 text-xs mt-3 tracking-widest">
+              Press ESC or click outside to close
+            </p>
           </div>
         </div>
       )}
