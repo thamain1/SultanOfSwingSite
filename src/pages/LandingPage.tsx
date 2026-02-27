@@ -94,11 +94,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 text-xs tracking-widest">
-          <span>SCROLL</span>
-          <div className="w-px h-10 bg-gradient-to-b from-gray-500 to-transparent" />
-        </div>
       </section>
 
       {/* ── WHAT IT IMPROVES ── */}
