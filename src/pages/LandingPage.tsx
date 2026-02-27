@@ -341,18 +341,19 @@ export default function LandingPage() {
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
           onClick={closeVideo}
         >
+          {/* Close button — fixed to top-right of screen, always on top of everything */}
+          <button
+            onClick={closeVideo}
+            style={oswald}
+            className="fixed top-5 right-5 z-[60] bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-widest px-5 py-3 transition-colors shadow-xl"
+          >
+            ✕ CLOSE
+          </button>
+
           <div
             className="relative w-full max-w-3xl"
             onClick={e => e.stopPropagation()}
           >
-            {/* Close button — always visible inside the container */}
-            <button
-              onClick={closeVideo}
-              style={oswald}
-              className="absolute top-3 right-3 z-10 bg-black/70 hover:bg-orange-500 text-white text-xs tracking-widest px-3 py-2 transition-colors"
-            >
-              ✕ CLOSE
-            </button>
             <video
               ref={videoRef}
               src="/assets/demo.mp4"
@@ -360,9 +361,6 @@ export default function LandingPage() {
               autoPlay
               className="w-full shadow-2xl"
             />
-            <p className="text-center text-gray-600 text-xs mt-3 tracking-widest">
-              Press ESC or click outside to close
-            </p>
           </div>
         </div>
       )}
