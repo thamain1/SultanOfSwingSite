@@ -81,7 +81,7 @@ export default function LandingPage() {
                   <path d="M2 1.5l7 3.5-7 3.5V1.5z" />
                 </svg>
               </span>
-              WATCH DEMO (23s)
+              WATCH DEMO
             </button>
           </div>
 
@@ -107,7 +107,7 @@ export default function LandingPage() {
               {
                 icon: '⏱',
                 title: 'TIMING',
-                desc: 'Train your hands to fire at the right moment — just like live pitching. No more early swings.',
+                desc: 'The bungee snaps the ball back instantly — no chasing, no re-placing. Swing 3x more often and build timing through pure volume.',
               },
               {
                 icon: '🏏',
@@ -156,9 +156,9 @@ export default function LandingPage() {
                 </div>
                 <h3 style={oswald} className="text-2xl font-bold text-white mb-2">STATIC TEE TRAINING</h3>
                 <ul className="text-gray-400 text-sm space-y-1">
-                  <li>✗ Ball doesn't move like a real pitch</li>
-                  <li>✗ No dynamic feel or feedback</li>
-                  <li>✗ Builds bad swing habits</li>
+                  <li>✗ Re-place the ball after every swing</li>
+                  <li>✗ Adjust your swing to avoid hitting the tee</li>
+                  <li>✗ Slow reps, fewer quality swings per session</li>
                 </ul>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function LandingPage() {
             {/* Sultan Way */}
             <div className="relative overflow-hidden group cursor-pointer" onClick={openVideo}>
               <img
-                src="/assets/Screenshot_20260226_212809_Gallery.jpg"
+                src="/assets/new_swing.jpg"
                 alt="Sultan of Swing in use"
                 className="w-full h-80 object-cover object-top group-hover:scale-105 transition-all duration-500"
               />
@@ -182,11 +182,11 @@ export default function LandingPage() {
                 <div className="inline-block bg-orange-500 text-white text-xs tracking-widest px-3 py-1 mb-3 w-fit" style={oswald}>
                   ✓ THE SULTAN WAY
                 </div>
-                <h3 style={oswald} className="text-2xl font-bold text-white mb-2">DYNAMIC GAME-LIKE CONTACT</h3>
+                <h3 style={oswald} className="text-2xl font-bold text-white mb-2">GAME-LIKE CONTACT, NO TEE</h3>
                 <ul className="text-white text-sm space-y-1">
-                  <li>✓ Ball behaves like live pitching</li>
-                  <li>✓ True game feel and timing</li>
-                  <li>✓ Builds winning swing mechanics</li>
+                  <li>✓ Ball snaps back on bungee — just keep swinging</li>
+                  <li>✓ Full swing-through, nothing to dodge</li>
+                  <li>✓ 3x more reps per session vs traditional training</li>
                 </ul>
               </div>
             </div>
@@ -207,13 +207,13 @@ export default function LandingPage() {
                 title: 'SET IT',
                 sub: 'Place at Plate',
                 desc: 'Set up in seconds anywhere — batting cage, backyard, gym. No anchoring required.',
-                img: '/assets/Screenshot_20260226_212809_Gallery.jpg',
+                img: '/assets/set_it.jpg',
               },
               {
                 num: '02',
                 title: 'SWING',
                 sub: 'Hit the Target',
-                desc: 'The ball reacts on contact giving you immediate feedback on your swing path and timing.',
+                desc: 'Swing through freely — the bungee cord snaps the ball right back into position. No re-placing, no tee to avoid.',
                 img: '/assets/kid_hitting_ball.jpg',
               },
               {
@@ -356,7 +356,7 @@ export default function LandingPage() {
           >
             <video
               ref={videoRef}
-              src="/assets/demo.mp4"
+              src="/assets/30_second_ad_compressed.mp4"
               controls
               autoPlay
               className="w-full shadow-2xl"
