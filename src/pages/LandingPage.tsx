@@ -214,7 +214,7 @@ export default function LandingPage() {
                 title: 'SWING',
                 sub: 'Hit the Target',
                 desc: 'Swing through freely — the bungee cord snaps the ball right back into position. No re-placing, no tee to avoid.',
-                img: '/assets/kid_hitting_ball.jpg',
+                img: '/assets/second_swing.jpg',
               },
               {
                 num: '03',
