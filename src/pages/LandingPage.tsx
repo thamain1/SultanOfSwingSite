@@ -354,7 +354,7 @@ export default function LandingPage() {
           >
             <video
               ref={videoRef}
-              src="/assets/30_second_ad_compressed.mp4"
+              src="/assets/30_second_ad_compressed.mp4?v=2"
               controls
               autoPlay
               className="w-full shadow-2xl"
