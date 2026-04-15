@@ -323,9 +323,7 @@ export default function LandingPage() {
       {/* ── FOOTER ── */}
       <footer className="border-t border-white/10 py-8 px-4 bg-black">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div style={oswald} className="text-white font-bold tracking-widest">
-            SULTAN <span className="text-orange-500">OF SWING</span>
-          </div>
+          <img src="/assets/sultan-logo.png" alt="Sultan of Swing" className="h-10" />
           <p className="text-gray-600 text-xs">© 2026 Sultan of Swing. All rights reserved.</p>
           <div className="flex gap-6 text-gray-600 text-xs tracking-widest">
             <a href="#" className="hover:text-orange-500 transition-colors">Privacy</a>

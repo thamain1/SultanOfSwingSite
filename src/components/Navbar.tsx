@@ -11,13 +11,8 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        <Link to="/" className="flex flex-col leading-none">
-          <span style={{ fontFamily: 'Oswald, sans-serif' }} className="text-white font-bold text-xl tracking-widest uppercase">
-            SULTAN
-          </span>
-          <span style={{ fontFamily: 'Oswald, sans-serif' }} className="text-orange-500 font-semibold text-xs tracking-[0.3em] uppercase -mt-1">
-            OF SWING
-          </span>
+        <Link to="/" className="flex items-center">
+          <img src="/assets/sultan-logo.png" alt="Sultan of Swing" className="h-12" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

@@ -352,8 +352,9 @@ export default function OrderPage() {
     <div className="bg-black min-h-screen">
       {/* Top bar */}
       <div className="border-b border-white/10 bg-black/95 px-4 py-4 flex items-center justify-between max-w-7xl mx-auto">
-        <Link to="/" style={oswald} className="text-white font-bold tracking-widest hover:text-orange-500 transition-colors">
-          &larr; SULTAN <span className="text-orange-500">OF SWING</span>
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <span className="text-white text-lg">&larr;</span>
+          <img src="/assets/sultan-logo.png" alt="Sultan of Swing" className="h-10" />
         </Link>
         <div className="flex items-center gap-2 text-gray-400 text-xs tracking-widest">
           <span className="text-orange-500">🔒</span> SECURE CHECKOUT
