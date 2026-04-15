@@ -69,7 +69,7 @@ export default function LandingPage() {
               style={oswald}
               className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase transition-all hover:scale-105"
             >
-              SHOP NOW — $349
+              SHOP NOW
             </button>
             <button
               onClick={openVideo}
@@ -308,7 +308,7 @@ export default function LandingPage() {
             style={oswald}
             className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-14 py-5 text-xl tracking-widest uppercase transition-all hover:scale-105 shadow-lg shadow-orange-500/20"
           >
-            ORDER NOW — $349
+            ORDER NOW
           </button>
           <div className="mt-8 flex justify-center gap-10">
             {['Ships Fast', 'Durable Build', 'Portable', '30-Day Guarantee'].map(f => (
