@@ -17,8 +17,8 @@ function ProductCard({ id, name, model, price, image, description, category }: {
 
   return (
     <div className="border border-white/10 bg-zinc-950 hover:border-orange-500/50 transition-all group flex flex-col">
-      <div className="relative overflow-hidden">
-        <img src={image} alt={name} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+      <div className="relative overflow-hidden bg-white">
+        <img src={image} alt={name} className="w-full h-48 object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
         {category === "main" && (
           <div className="absolute top-2 left-2 bg-orange-500 text-white text-[10px] tracking-widest px-2 py-0.5 uppercase" style={oswald}>
             Main Unit
@@ -69,7 +69,7 @@ function CartSummary() {
           <div className="space-y-4 mb-6">
             {items.map(({ product, qty }) => (
               <div key={product.id} className="flex gap-3">
-                <img src={product.image} alt={product.name} className="w-16 h-16 object-cover border border-white/10 flex-shrink-0" />
+                <img src={product.image} alt={product.name} className="w-16 h-16 object-contain bg-white p-1 border border-white/10 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p style={oswald} className="text-white font-bold text-sm tracking-wide truncate">{product.name}</p>
                   <p className="text-orange-500 text-sm font-bold">{formatPrice(product.price)}</p>
