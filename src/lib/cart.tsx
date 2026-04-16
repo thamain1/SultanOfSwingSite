@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import { PRODUCTS, PROMO_CODES, USPS_FLAT_RATES, type Product } from "./products";
+import { PRODUCTS, PROMO_CODES, PROMO_DISCOUNTS, USPS_FLAT_RATES, type Product } from "./products";
 
 export interface CartItem {
   product: Product;
@@ -14,7 +14,7 @@ interface CartContextType {
   clearCart: () => void;
   promoCode: string;
   setPromoCode: (code: string) => void;
-  appliedPromo: { discount: number; label: string } | null;
+  appliedPromo: { label: string } | null;
   subtotal: number;
   discount: number;
   shippingCost: number | null; // null = not yet calculated
@@ -74,7 +74,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const appliedPromo = PROMO_CODES[promoCode.toUpperCase()] || null;
 
   const subtotal = items.reduce((sum, i) => sum + i.product.price * i.qty, 0);
-  const discount = appliedPromo ? Math.round(subtotal * appliedPromo.discount) : 0;
+  const discount = appliedPromo
+    ? items.reduce((sum, i) => {
+        const rate = PROMO_DISCOUNTS[i.product.promoTier];
+        return sum + Math.round(i.product.price * i.qty * rate);
+      }, 0)
+    : 0;
 
   const hasLargeItem = items.some((i) => i.product.shippingType === "ups");
   const hasSmallItem = items.some((i) => i.product.shippingType === "usps");

@@ -43,7 +43,6 @@ async function getUpsRate(
     if (!tokenData.access_token) return null;
 
     // Step 2: Get rate quote
-    // TODO: Replace placeholder weight/dimensions with actual product specs
     const rateBody = {
       RateRequest: {
         Shipment: {
@@ -60,13 +59,13 @@ async function getUpsRate(
             PackagingType: { Code: "02" }, // Customer Supplied Package
             PackageWeight: {
               UnitOfMeasurement: { Code: "LBS" },
-              Weight: "25", // placeholder — update with real weight
+              Weight: "32.5",
             },
             Dimensions: {
               UnitOfMeasurement: { Code: "IN" },
-              Length: "36", // placeholder
-              Width: "18",  // placeholder
-              Height: "12", // placeholder
+              Length: "52",
+              Width: "14",
+              Height: "14",
             },
           },
           Service: { Code: "03" }, // UPS Ground

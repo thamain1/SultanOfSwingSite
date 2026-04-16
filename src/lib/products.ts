@@ -7,6 +7,7 @@ export interface Product {
   image: string;
   category: "main" | "accessory";
   shippingType: "ups" | "usps";
+  promoTier: "standard" | "pack"; // standard = 10%, pack = 20%
 }
 
 export const PRODUCTS: Product[] = [
@@ -19,6 +20,7 @@ export const PRODUCTS: Product[] = [
     image: "/assets/products/sultan-softball.jpeg",
     category: "main",
     shippingType: "ups",
+    promoTier: "standard",
   },
   {
     id: "bb-2000",
@@ -29,6 +31,7 @@ export const PRODUCTS: Product[] = [
     image: "/assets/products/sultan-baseball.jpeg",
     category: "main",
     shippingType: "ups",
+    promoTier: "standard",
   },
   {
     id: "pc-plate",
@@ -36,34 +39,64 @@ export const PRODUCTS: Product[] = [
     name: "Portable / Collapsible Plate",
     description: "Lightweight, portable home plate. Folds flat for easy transport.",
     price: 4500,
-    image: "/assets/products/portable-plate.png",
+    image: "/assets/products/portable-plate.jpeg",
     category: "accessory",
     shippingType: "usps",
+    promoTier: "standard",
   },
   {
     id: "sb-pk",
     model: "SB-PK",
-    name: "Softball & Cable Pack",
-    description: "Replacement softball and bungee cable for Sultan of Swing Softball.",
+    name: "Softball Bungees & Rope Cables Pack",
+    description: "Replacement softball, bungees, and rope cables for Sultan of Swing Softball.",
     price: 4850,
     image: "/assets/products/softball-cable-pack.png",
     category: "accessory",
     shippingType: "usps",
+    promoTier: "pack",
   },
   {
     id: "bb-pk",
     model: "BB-PK",
-    name: "Baseball & Cable Pack",
-    description: "Replacement baseball and bungee cable for Sultan of Swing Baseball.",
+    name: "Baseball Bungees & Rope Cables Pack",
+    description: "Replacement baseball, bungees, and rope cables for Sultan of Swing Baseball.",
     price: 4250,
     image: "/assets/products/baseball-cable-pack.jpeg",
     category: "accessory",
     shippingType: "usps",
+    promoTier: "pack",
+  },
+  {
+    id: "bb-complete",
+    model: "BB",
+    name: "Baseball Complete Bungee, Rope, Cables & Connectors",
+    description: "Complete replacement kit — baseball, bungee, rope, cables, and connectors.",
+    price: 5000,
+    image: "/assets/products/complete-bungee-pack.png",
+    category: "accessory",
+    shippingType: "usps",
+    promoTier: "pack",
+  },
+  {
+    id: "sb-complete",
+    model: "SB",
+    name: "Softball Complete Bungee, Rope, Cables & Connectors",
+    description: "Complete replacement kit — softball, bungee, rope, cables, and connectors.",
+    price: 5350,
+    image: "/assets/products/complete-bungee-pack.png",
+    category: "accessory",
+    shippingType: "usps",
+    promoTier: "pack",
   },
 ];
 
-export const PROMO_CODES: Record<string, { discount: number; label: string }> = {
-  "PLATOS#1": { discount: 0.10, label: "Tournament Pricing — 10% Off" },
+export const PROMO_DISCOUNTS = {
+  standard: 0.10, // 10% off main items + plate
+  pack: 0.20,     // 20% off cable/complete packs
+};
+
+export const PROMO_CODES: Record<string, { label: string }> = {
+  "PLATOS#1": { label: "Tournament Pricing" },
 };
 
 // USPS Flat Rate box prices (cents) — updated annually in January

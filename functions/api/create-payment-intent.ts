@@ -8,24 +8,30 @@ interface CartItem {
 }
 
 // Server-side product prices (cents) — source of truth
-const PRICES: Record<string, number> = {
-  "sb-1000": 49500,
-  "bb-2000": 48950,
-  "pc-plate": 4500,
-  "sb-pk": 4850,
-  "bb-pk": 4250,
+const PRODUCTS: Record<string, { price: number; promoTier: "standard" | "pack" }> = {
+  "sb-1000": { price: 49500, promoTier: "standard" },
+  "bb-2000": { price: 48950, promoTier: "standard" },
+  "pc-plate": { price: 4500, promoTier: "standard" },
+  "sb-pk": { price: 4850, promoTier: "pack" },
+  "bb-pk": { price: 4250, promoTier: "pack" },
+  "bb-complete": { price: 5000, promoTier: "pack" },
+  "sb-complete": { price: 5350, promoTier: "pack" },
 };
 
-const PROMO_CODES: Record<string, number> = {
-  "PLATOS#1": 0.10,
+const PROMO_DISCOUNTS: Record<string, number> = {
+  standard: 0.10, // 10% off
+  pack: 0.20,     // 20% off
 };
+
+const VALID_PROMO_CODES = new Set(["PLATOS#1"]);
 
 // USPS Flat Rate (cents)
 const USPS_MEDIUM_FLAT = 1610;
 
 function calculateShipping(items: CartItem[]): number {
-  const hasLarge = items.some((i) => i.id === "sb-1000" || i.id === "bb-2000");
-  const hasSmall = items.some((i) => !["sb-1000", "bb-2000"].includes(i.id));
+  const LARGE_IDS = new Set(["sb-1000", "bb-2000"]);
+  const hasLarge = items.some((i) => LARGE_IDS.has(i.id));
+  const hasSmall = items.some((i) => !LARGE_IDS.has(i.id));
 
   let shipping = 0;
 
@@ -67,17 +73,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Calculate totals server-side (never trust client)
     let subtotal = 0;
     for (const item of items) {
-      const price = PRICES[item.id];
-      if (!price) {
+      const product = PRODUCTS[item.id];
+      if (!product) {
         return Response.json({ error: `Unknown product: ${item.id}` }, { status: 400 });
       }
-      subtotal += price * item.qty;
+      subtotal += product.price * item.qty;
     }
 
-    // Apply promo discount
+    // Apply tiered promo discount (10% standard, 20% packs)
     let discount = 0;
-    if (promoCode && PROMO_CODES[promoCode.toUpperCase()]) {
-      discount = Math.round(subtotal * PROMO_CODES[promoCode.toUpperCase()]);
+    if (promoCode && VALID_PROMO_CODES.has(promoCode.toUpperCase())) {
+      for (const item of items) {
+        const product = PRODUCTS[item.id];
+        if (product) {
+          const rate = PROMO_DISCOUNTS[product.promoTier];
+          discount += Math.round(product.price * item.qty * rate);
+        }
+      }
     }
 
     const shippingCost = calculateShipping(items);
