@@ -241,16 +241,6 @@ function CheckoutForm() {
         confirmParams: {
           return_url: `${window.location.origin}/order/confirmation`,
           receipt_email: form.email,
-          shipping: {
-            name: `${form.firstName} ${form.lastName}`,
-            address: {
-              line1: form.address,
-              city: form.city,
-              state: form.state,
-              postal_code: form.zip,
-              country: "US",
-            },
-          },
         },
       });
 
