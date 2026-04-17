@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { stripePromise } from "../lib/stripe";
@@ -151,10 +151,11 @@ function CartSummary() {
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { total, items, shippingCost, promoCode } = useCart();
+  const { total, items, shippingCost, promoCode, setShippingCost, hasLargeItem } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "affirm">("card");
+  const lastZipRef = useRef("");
 
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "",
@@ -163,6 +164,33 @@ function CheckoutForm() {
 
   const handle = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  // Fetch FedEx shipping rate when ZIP + state are filled for large items
+  useEffect(() => {
+    if (!hasLargeItem || form.zip.length < 5 || !form.state) return;
+    if (form.zip === lastZipRef.current) return;
+    lastZipRef.current = form.zip;
+
+    const controller = new AbortController();
+    fetch("/api/calculate-shipping", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: items.map((i) => ({ id: i.product.id, qty: i.qty })),
+        destination: { zip: form.zip, state: form.state },
+      }),
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data: { total?: number }) => {
+        if (typeof data.total === "number") {
+          setShippingCost(data.total);
+        }
+      })
+      .catch(() => {});
+
+    return () => controller.abort();
+  }, [form.zip, form.state, hasLargeItem, items, setShippingCost]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
