@@ -199,6 +199,14 @@ function CheckoutForm() {
     setError(null);
 
     try {
+      // Validate payment form before any async work
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        setError(submitError.message || "Please check your payment details.");
+        setIsProcessing(false);
+        return;
+      }
+
       // Create PaymentIntent on server
       const res = await fetch("/api/create-payment-intent", {
         method: "POST",
