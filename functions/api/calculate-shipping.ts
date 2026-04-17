@@ -1,6 +1,8 @@
 interface Env {
-  UPS_CLIENT_ID?: string;
-  UPS_CLIENT_SECRET?: string;
+  FEDEX_CLIENT_ID?: string;
+  FEDEX_CLIENT_SECRET?: string;
+  FEDEX_ACCOUNT_NUMBER?: string;
+  FEDEX_SANDBOX?: string; // "true" to use sandbox URL
 }
 
 interface ShipRequest {
@@ -20,79 +22,78 @@ const LARGE_ITEMS = new Set(["sb-1000", "bb-2000"]);
 // Ship-from: Platos Pro LLC Manufacturing, Pomona, CA 91766
 const ORIGIN_ZIP = "91766";
 
-async function getUpsRate(
+function fedexBaseUrl(env: Env): string {
+  return env.FEDEX_SANDBOX === "true"
+    ? "https://apis-sandbox.fedex.com"
+    : "https://apis.fedex.com";
+}
+
+async function getFedExToken(env: Env): Promise<string | null> {
+  if (!env.FEDEX_CLIENT_ID || !env.FEDEX_CLIENT_SECRET) return null;
+
+  try {
+    const res = await fetch(`${fedexBaseUrl(env)}/oauth/token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: env.FEDEX_CLIENT_ID,
+        client_secret: env.FEDEX_CLIENT_SECRET,
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json() as { access_token?: string };
+    return data.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function getFedExRate(
   env: Env,
   destinationZip: string,
 ): Promise<number | null> {
-  if (!env.UPS_CLIENT_ID || !env.UPS_CLIENT_SECRET) {
-    return null; // UPS not configured, use fallback
-  }
+  const token = await getFedExToken(env);
+  if (!token) return null;
 
   try {
-    // Step 1: Get OAuth token
-    const tokenRes = await fetch("https://onlinetools.ups.com/security/v1/oauth/token", {
+    const res = await fetch(`${fedexBaseUrl(env)}/rate/v1/rates/quotes`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": `Basic ${btoa(`${env.UPS_CLIENT_ID}:${env.UPS_CLIENT_SECRET}`)}`,
-      },
-      body: "grant_type=client_credentials",
-    });
-
-    const tokenData = await tokenRes.json() as { access_token?: string };
-    if (!tokenData.access_token) return null;
-
-    // Step 2: Get rate quote
-    const rateBody = {
-      RateRequest: {
-        Shipment: {
-          Shipper: {
-            Address: { PostalCode: ORIGIN_ZIP, CountryCode: "US" },
-          },
-          ShipTo: {
-            Address: { PostalCode: destinationZip, CountryCode: "US" },
-          },
-          ShipFrom: {
-            Address: { PostalCode: ORIGIN_ZIP, CountryCode: "US" },
-          },
-          Package: {
-            PackagingType: { Code: "02" }, // Customer Supplied Package
-            PackageWeight: {
-              UnitOfMeasurement: { Code: "LBS" },
-              Weight: "32.5",
-            },
-            Dimensions: {
-              UnitOfMeasurement: { Code: "IN" },
-              Length: "52",
-              Width: "14",
-              Height: "14",
-            },
-          },
-          Service: { Code: "03" }, // UPS Ground
-        },
-      },
-    };
-
-    const rateRes = await fetch("https://onlinetools.ups.com/api/rating/v1/Rate", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${tokenData.access_token}`,
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
-        "transId": crypto.randomUUID(),
-        "transactionSrc": "sultanofswing",
       },
-      body: JSON.stringify(rateBody),
+      body: JSON.stringify({
+        accountNumber: { value: env.FEDEX_ACCOUNT_NUMBER },
+        requestedShipment: {
+          shipper: { address: { postalCode: ORIGIN_ZIP, countryCode: "US" } },
+          recipient: { address: { postalCode: destinationZip, countryCode: "US", residential: true } },
+          pickupType: "DROPOFF_AT_FEDEX_LOCATION",
+          rateRequestType: ["ACCOUNT"],
+          requestedPackageLineItems: [{
+            weight: { units: "LB", value: 32.5 },
+            dimensions: { length: 52, width: 14, height: 14, units: "IN" },
+          }],
+          serviceType: "GROUND_HOME_DELIVERY",
+        },
+      }),
     });
 
-    const rateData = await rateRes.json() as {
-      RateResponse?: {
-        RatedShipment?: { TotalCharges?: { MonetaryValue?: string } };
+    if (!res.ok) return null;
+
+    const data = await res.json() as {
+      output?: {
+        rateReplyDetails?: Array<{
+          ratedShipmentDetails?: Array<{
+            totalNetCharge?: number;
+          }>;
+        }>;
       };
     };
 
-    const charge = rateData?.RateResponse?.RatedShipment?.TotalCharges?.MonetaryValue;
-    if (charge) {
-      return Math.round(parseFloat(charge) * 100); // convert to cents
+    const charge = data?.output?.rateReplyDetails?.[0]?.ratedShipmentDetails?.[0]?.totalNetCharge;
+    if (typeof charge === "number") {
+      return Math.round(charge * 100); // convert dollars to cents
     }
 
     return null;
@@ -101,15 +102,21 @@ async function getUpsRate(
   }
 }
 
-// Fallback flat rate when UPS API unavailable
-function getUpsFallbackRate(destinationState: string): number {
+// Fallback zone-based rates from Pomona, CA (cents)
+// Based on FedEx Ground dimensional weight: 74 lbs (52x14x14 / 139)
+function getFedExFallbackRate(destinationState: string): number {
   const westCoast = new Set(["CA", "OR", "WA", "NV", "AZ"]);
-  const central = new Set(["TX", "CO", "IL", "MO", "OK", "KS", "NE", "NM", "UT", "MT", "WY", "ND", "SD", "MN", "IA", "WI", "AR", "LA", "MS", "AL", "TN"]);
+  const mountain = new Set(["CO", "UT", "NM", "MT", "WY", "ID"]);
+  const central = new Set([
+    "TX", "OK", "KS", "NE", "MO", "IL", "MN", "IA", "WI",
+    "ND", "SD", "AR", "LA", "MS", "AL", "TN",
+  ]);
 
-  if (westCoast.has(destinationState)) return 1500; // $15
-  if (central.has(destinationState)) return 2500;    // $25
-  if (destinationState === "HI" || destinationState === "AK") return 5500; // $55
-  return 3500; // $35 — East Coast / default
+  if (westCoast.has(destinationState)) return 8000;   // $80
+  if (mountain.has(destinationState)) return 10000;   // $100
+  if (central.has(destinationState)) return 12500;    // $125
+  if (destinationState === "AK" || destinationState === "HI") return 17500; // $175
+  return 15000; // $150 — East Coast / default
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -128,14 +135,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const breakdown: { carrier: string; rate: number; label: string }[] = [];
 
     if (hasLarge) {
-      // Try UPS API, fall back to zone estimate
-      const upsRate = await getUpsRate(context.env, destination.zip);
-      const rate = upsRate ?? getUpsFallbackRate(destination.state);
+      // Try FedEx API, fall back to zone estimate
+      const fedexRate = await getFedExRate(context.env, destination.zip);
+      const rate = fedexRate ?? getFedExFallbackRate(destination.state);
       totalShipping += rate;
       breakdown.push({
-        carrier: "UPS Ground",
+        carrier: "FedEx Home Delivery",
         rate,
-        label: upsRate ? "Real-time rate" : "Estimated rate",
+        label: fedexRate ? "Real-time rate" : "Estimated rate",
       });
     }
 

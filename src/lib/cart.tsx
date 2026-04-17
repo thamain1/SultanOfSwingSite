@@ -81,7 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }, 0)
     : 0;
 
-  const hasLargeItem = items.some((i) => i.product.shippingType === "ups");
+  const hasLargeItem = items.some((i) => i.product.shippingType === "fedex");
   const hasSmallItem = items.some((i) => i.product.shippingType === "usps");
 
   // Auto-calculate USPS shipping for small-only orders
@@ -90,7 +90,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (shippingCost !== null) return shippingCost;
     // If only small items, use USPS medium flat rate as default
     if (!hasLargeItem && hasSmallItem) return USPS_FLAT_RATES.medium;
-    return null; // needs UPS quote
+    return null; // needs FedEx quote
   })();
 
   const total =

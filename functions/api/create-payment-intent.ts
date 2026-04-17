@@ -28,17 +28,19 @@ const VALID_PROMO_CODES = new Set(["PLATOS#1"]);
 // USPS Flat Rate (cents)
 const USPS_MEDIUM_FLAT = 1610;
 
-function calculateShipping(items: CartItem[]): number {
-  const LARGE_IDS = new Set(["sb-1000", "bb-2000"]);
+const LARGE_IDS = new Set(["sb-1000", "bb-2000"]);
+
+// Maximum acceptable shipping cost (cents) — sanity check ceiling
+const MAX_SHIPPING = 25000; // $250
+
+function calculateFallbackShipping(items: CartItem[]): number {
   const hasLarge = items.some((i) => LARGE_IDS.has(i.id));
   const hasSmall = items.some((i) => !LARGE_IDS.has(i.id));
 
   let shipping = 0;
 
   if (hasLarge) {
-    // UPS placeholder — will be replaced with real UPS API rate
-    // For now, use flat estimate based on weight zone
-    shipping += 3500; // $35 placeholder for large items
+    shipping += 15000; // $150 — conservative East Coast fallback for FedEx Home Delivery
   }
 
   if (hasSmall) {
@@ -62,9 +64,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       email: string;
       promoCode?: string;
       paymentMethod?: "card" | "affirm";
+      shippingTotal?: number;
     };
 
-    const { items, shipping, email, promoCode, paymentMethod = "card" } = body;
+    const { items, shipping, email, promoCode, paymentMethod = "card", shippingTotal } = body;
 
     if (!items || items.length === 0) {
       return Response.json({ error: "Cart is empty" }, { status: 400 });
@@ -92,7 +95,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     }
 
-    const shippingCost = calculateShipping(items);
+    // Use client-provided shipping if valid, otherwise fall back
+    const fallback = calculateFallbackShipping(items);
+    let shippingCost: number;
+
+    if (typeof shippingTotal === "number" && shippingTotal > 0 && shippingTotal <= MAX_SHIPPING) {
+      shippingCost = shippingTotal;
+    } else {
+      shippingCost = fallback;
+    }
+
     const total = subtotal - discount + shippingCost;
 
     if (total < 50) {

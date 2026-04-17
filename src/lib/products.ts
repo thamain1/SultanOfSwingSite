@@ -6,7 +6,7 @@ export interface Product {
   price: number; // cents
   image: string;
   category: "main" | "accessory";
-  shippingType: "ups" | "usps";
+  shippingType: "fedex" | "usps";
   promoTier: "standard" | "pack"; // standard = 10%, pack = 20%
 }
 
@@ -19,7 +19,7 @@ export const PRODUCTS: Product[] = [
     price: 49500,
     image: "/assets/products/sultan-softball.jpeg",
     category: "main",
-    shippingType: "ups",
+    shippingType: "fedex",
     promoTier: "standard",
   },
   {
@@ -30,7 +30,7 @@ export const PRODUCTS: Product[] = [
     price: 48950,
     image: "/assets/products/sultan-baseball.jpeg",
     category: "main",
-    shippingType: "ups",
+    shippingType: "fedex",
     promoTier: "standard",
   },
   {

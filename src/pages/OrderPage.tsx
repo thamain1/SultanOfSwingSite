@@ -151,7 +151,7 @@ function CartSummary() {
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { total, items } = useCart();
+  const { total, items, shippingCost, promoCode } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "affirm">("card");
@@ -185,7 +185,9 @@ function CheckoutForm() {
             zip: form.zip,
           },
           email: form.email,
+          promoCode,
           paymentMethod,
+          shippingTotal: shippingCost,
         }),
       });
 
