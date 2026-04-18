@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage'
 import OrderPage from './pages/OrderPage'
 import VideosPage from './pages/VideosPage'
 import OrderConfirmation from './pages/OrderConfirmation'
+import PrivacyPage from './pages/PrivacyPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/videos" element={<VideosPage />} />
           <Route path="/order" element={<OrderPage />} />
           <Route path="/order/confirmation" element={<OrderConfirmation />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

@@ -326,7 +326,7 @@ export default function LandingPage() {
           <img src="/assets/sultan-logo.png" alt="Sultan of Swing" className="h-10" />
           <p className="text-gray-600 text-xs">© 2026 Sultan of Swing. All rights reserved.</p>
           <div className="flex gap-6 text-gray-600 text-xs tracking-widest">
-            <a href="#" className="hover:text-orange-500 transition-colors">Privacy</a>
+            <a href="/privacy" className="hover:text-orange-500 transition-colors">Privacy</a>
             <a href="#" className="hover:text-orange-500 transition-colors">Terms</a>
             <a href="#" className="hover:text-orange-500 transition-colors">Contact</a>
           </div>
