@@ -328,7 +328,7 @@ export default function LandingPage() {
           <div className="flex gap-6 text-gray-600 text-xs tracking-widest">
             <a href="/privacy" className="hover:text-orange-500 transition-colors">Privacy</a>
             <a href="#" className="hover:text-orange-500 transition-colors">Terms</a>
-            <a href="#" className="hover:text-orange-500 transition-colors">Contact</a>
+            <a href="mailto:sultan.of.swing.sales@gmail.com" className="hover:text-orange-500 transition-colors">Contact</a>
           </div>
         </div>
       </footer>

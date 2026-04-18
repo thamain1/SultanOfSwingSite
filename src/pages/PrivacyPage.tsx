@@ -94,7 +94,7 @@ export default function PrivacyPage() {
               Platos Pro LLC<br />
               1478 E Mission Blvd Unit 5<br />
               Pomona, CA 91766<br />
-              Email: <a href="mailto:info@sultanofswing.com" className="text-orange-500 hover:underline">info@sultanofswing.com</a>
+              Email: <a href="mailto:sultan.of.swing.sales@gmail.com" className="text-orange-500 hover:underline">sultan.of.swing.sales@gmail.com</a>
             </p>
           </Section>
         </div>
