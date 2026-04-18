@@ -255,17 +255,17 @@ export default function LandingPage() {
             {[
               {
                 quote: '"My guys are getting 3x the quality reps in half the time. Nothing else trains timing like this."',
-                name: 'Coach [Placeholder]',
+                name: 'B. Johnson',
                 role: 'High School Varsity Coach',
               },
               {
                 quote: '"Finally a tool that replicates actual game contact. My hitters\' confidence went through the roof."',
-                name: 'Coach [Placeholder]',
+                name: 'S. Venable',
                 role: 'Travel Ball Director',
               },
               {
                 quote: '"I bought two. One for my son, one for the team. Best investment I\'ve made in training equipment."',
-                name: 'Parent [Placeholder]',
+                name: 'J. Hill',
                 role: 'Baseball Parent',
               },
             ].map(({ quote, name, role }) => (
