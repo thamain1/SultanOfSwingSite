@@ -30,6 +30,13 @@ export default function Navbar() {
               {label}
             </button>
           ))}
+          <Link
+            to="/videos"
+            style={{ fontFamily: 'Oswald, sans-serif' }}
+            className="text-gray-300 hover:text-orange-500 text-sm tracking-widest transition-colors"
+          >
+            VIDEOS
+          </Link>
         </div>
 
         <button
