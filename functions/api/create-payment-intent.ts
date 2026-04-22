@@ -62,12 +62,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       items: CartItem[];
       shipping: { name: string; address: string; city: string; state: string; zip: string };
       email: string;
+      phone?: string;
       promoCode?: string;
       paymentMethod?: "card" | "affirm";
       shippingTotal?: number;
     };
 
-    const { items, shipping, email, promoCode, paymentMethod = "card", shippingTotal } = body;
+    const { items, shipping, email, phone, promoCode, paymentMethod = "card", shippingTotal } = body;
 
     if (!items || items.length === 0) {
       return Response.json({ error: "Cart is empty" }, { status: 400 });
@@ -140,6 +141,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     params.append("metadata[subtotal]", subtotal.toString());
     params.append("metadata[discount]", discount.toString());
     params.append("metadata[shipping]", shippingCost.toString());
+    // Shipping address persisted to metadata — survives any Stripe Elements
+    // re-confirm that might clear the top-level `shipping` field.
+    params.append("metadata[ship_name]",    shipping.name);
+    params.append("metadata[ship_line1]",   shipping.address);
+    params.append("metadata[ship_city]",    shipping.city);
+    params.append("metadata[ship_state]",   shipping.state);
+    params.append("metadata[ship_zip]",     shipping.zip);
+    params.append("metadata[ship_country]", "US");
+    params.append("metadata[ship_email]",   email);
+    if (phone) params.append("metadata[ship_phone]", phone);
 
     const stripeRes = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",

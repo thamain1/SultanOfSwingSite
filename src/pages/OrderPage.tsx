@@ -221,6 +221,7 @@ function CheckoutForm() {
             zip: form.zip,
           },
           email: form.email,
+          phone: form.phone,
           promoCode,
           paymentMethod,
           shippingTotal: shippingCost,
