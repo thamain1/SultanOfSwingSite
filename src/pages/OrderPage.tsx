@@ -151,7 +151,7 @@ function CartSummary() {
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { total, items, shippingCost, promoCode, setShippingCost, hasLargeItem } = useCart();
+  const { total, items, subtotal, discount, shippingCost, promoCode, setShippingCost, hasLargeItem } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"card" | "affirm">("card");
@@ -351,6 +351,33 @@ function CheckoutForm() {
         </div>
       </div>
 
+      {/* Order summary — shipping as a clear line item */}
+      <div className="bg-zinc-900 border border-white/10 p-4 space-y-2">
+        <h3 style={oswald} className="text-xs tracking-widest uppercase text-gray-400 border-b border-white/10 pb-2 mb-3">Order Summary</h3>
+        <div className="flex justify-between text-sm text-gray-400">
+          <span>Subtotal</span>
+          <span>{formatPrice(subtotal)}</span>
+        </div>
+        {discount > 0 && (
+          <div className="flex justify-between text-sm text-green-400">
+            <span>Discount</span>
+            <span>−{formatPrice(discount)}</span>
+          </div>
+        )}
+        <div className="flex justify-between text-sm text-gray-400">
+          <span>Shipping</span>
+          {shippingCost === null ? (
+            <span className="text-amber-400 text-xs">Enter ZIP above to calculate</span>
+          ) : (
+            <span className="text-white">{shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}</span>
+          )}
+        </div>
+        <div className="flex justify-between text-white font-bold text-lg pt-2 border-t border-white/10" style={oswald}>
+          <span>TOTAL</span>
+          <span className="text-orange-500">{formatPrice(total)}</span>
+        </div>
+      </div>
+
       {error && (
         <div className="border border-red-500/50 bg-red-500/10 p-3 text-red-400 text-sm">
           {error}
@@ -359,11 +386,15 @@ function CheckoutForm() {
 
       <button
         type="submit"
-        disabled={!stripe || isProcessing || items.length === 0}
+        disabled={!stripe || isProcessing || items.length === 0 || (hasLargeItem && shippingCost === null)}
         style={oswald}
         className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-5 text-xl tracking-widest uppercase transition-all hover:scale-[1.01] shadow-lg shadow-orange-500/20"
       >
-        {isProcessing ? "PROCESSING..." : `PLACE ORDER — ${formatPrice(total)}`}
+        {isProcessing
+          ? "PROCESSING..."
+          : shippingCost === null && hasLargeItem
+          ? "ENTER ZIP TO CONTINUE"
+          : `PLACE ORDER — ${formatPrice(total)}`}
       </button>
 
       <p className="text-gray-600 text-xs text-center tracking-wide">
