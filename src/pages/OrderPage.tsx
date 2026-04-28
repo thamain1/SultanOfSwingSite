@@ -254,16 +254,9 @@ function CheckoutForm() {
 
       const { error: stripeError } =
         paymentMethod === "affirm"
-          ? await stripe.confirmPayment({
-              clientSecret,
-              confirmParams: {
-                return_url: returnUrl,
-                receipt_email: form.email,
-                payment_method_data: {
-                  type: "affirm",
-                  billing_details: billingDetails,
-                },
-              },
+          ? await stripe.confirmAffirmPayment(clientSecret, {
+              payment_method: { billing_details: billingDetails },
+              return_url: returnUrl,
             })
           : await stripe.confirmPayment({
               elements,
