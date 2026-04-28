@@ -45,6 +45,14 @@ export default function LandingPage() {
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500" />
 
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto pt-20">
+          <div className="flex justify-center mb-8">
+            <img
+              src="/assets/sultan-logo.png"
+              alt="Sultan of Swing"
+              className="h-32 sm:h-40 md:h-48 w-auto"
+            />
+          </div>
+
           <div className="inline-block bg-orange-500 text-black text-xs font-bold tracking-[0.3em] px-4 py-1 mb-6 uppercase" style={oswald}>
             ★ COACH TESTED · PLAYER APPROVED ★
           </div>
