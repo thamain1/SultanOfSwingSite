@@ -199,12 +199,14 @@ function CheckoutForm() {
     setError(null);
 
     try {
-      // Validate payment form before any async work
-      const { error: submitError } = await elements.submit();
-      if (submitError) {
-        setError(submitError.message || "Please check your payment details.");
-        setIsProcessing(false);
-        return;
+      // Card path validates the PaymentElement; Affirm has no inline form.
+      if (paymentMethod === "card") {
+        const { error: submitError } = await elements.submit();
+        if (submitError) {
+          setError(submitError.message || "Please check your payment details.");
+          setIsProcessing(false);
+          return;
+        }
       }
 
       // Create PaymentIntent on server
@@ -235,15 +237,42 @@ function CheckoutForm() {
         return;
       }
 
-      // Confirm payment
-      const { error: stripeError } = await stripe.confirmPayment({
-        elements,
-        clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/order/confirmation`,
-          receipt_email: form.email,
+      // Confirm payment — branch by method since Affirm has no PaymentElement
+      const returnUrl = `${window.location.origin}/order/confirmation`;
+      const billingDetails = {
+        name: `${form.firstName} ${form.lastName}`,
+        email: form.email,
+        phone: form.phone,
+        address: {
+          line1: form.address,
+          city: form.city,
+          state: form.state,
+          postal_code: form.zip,
+          country: "US",
         },
-      });
+      };
+
+      const { error: stripeError } =
+        paymentMethod === "affirm"
+          ? await stripe.confirmPayment({
+              clientSecret,
+              confirmParams: {
+                return_url: returnUrl,
+                receipt_email: form.email,
+                payment_method_data: {
+                  type: "affirm",
+                  billing_details: billingDetails,
+                },
+              },
+            })
+          : await stripe.confirmPayment({
+              elements,
+              clientSecret,
+              confirmParams: {
+                return_url: returnUrl,
+                receipt_email: form.email,
+              },
+            });
 
       if (stripeError) {
         setError(stripeError.message || "Payment failed. Please try again.");
@@ -327,28 +356,39 @@ function CheckoutForm() {
           </div>
         )}
 
-        {/* Stripe Payment Element */}
-        <div className="bg-zinc-900 border border-white/10 p-4 rounded">
-          <PaymentElement
-            options={{
-              layout: "tabs",
-              defaultValues: {
-                billingDetails: {
-                  name: `${form.firstName} ${form.lastName}`,
-                  email: form.email,
-                  phone: form.phone,
-                  address: {
-                    line1: form.address,
-                    city: form.city,
-                    state: form.state,
-                    postal_code: form.zip,
-                    country: "US",
+        {/* Stripe Payment Element — only mounted for the Card path. Affirm
+            collects everything on its own portal after redirect. */}
+        {paymentMethod === "card" && (
+          <div className="bg-zinc-900 border border-white/10 p-4 rounded">
+            <PaymentElement
+              options={{
+                layout: "tabs",
+                paymentMethodOrder: ["card"],
+                defaultValues: {
+                  billingDetails: {
+                    name: `${form.firstName} ${form.lastName}`,
+                    email: form.email,
+                    phone: form.phone,
+                    address: {
+                      line1: form.address,
+                      city: form.city,
+                      state: form.state,
+                      postal_code: form.zip,
+                      country: "US",
+                    },
                   },
                 },
-              },
-            }}
-          />
-        </div>
+              }}
+            />
+          </div>
+        )}
+
+        {paymentMethod === "affirm" && (
+          <div className="bg-zinc-900 border border-white/10 p-6 rounded text-sm text-gray-400">
+            No card details needed. Click <span className="text-orange-500 font-semibold">Place Order</span>{" "}
+            below to continue with Affirm — you'll be redirected to choose your payment plan.
+          </div>
+        )}
       </div>
 
       {/* Order summary — shipping as a clear line item */}
