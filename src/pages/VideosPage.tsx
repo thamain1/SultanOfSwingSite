@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar'
 
 const oswald = { fontFamily: 'Oswald, sans-serif' }
 
-const YOUTUBE_ID = 'H-1OrOi7qyQ'
+const YOUTUBE_ID = 'UPw9OBWzZXI'
 
 const chapters = [
   { time: '0:00', seconds: 0, title: 'Introduction to the Sultan of Swing' },
