@@ -267,9 +267,9 @@ export default function LandingPage() {
                 role: 'High School Varsity Coach',
               },
               {
-                quote: '"Finally a tool that replicates actual game contact. My hitters\' confidence went through the roof."',
-                name: 'S. Venable',
-                role: 'Travel Ball Director',
+                quote: '"The Sultan of Swing is a sturdy hitting tool that is easy & quick to assemble! It\'s great for extra swings on the side of actual batting practice where you don\'t have to pick up all of the baseballs. Its portability, easy set up and close down, allows us to take it anywhere. No more nets, buckets, and retrievers. The Sultan of Swing is a big saver of time!"',
+                name: 'Alec Adame',
+                role: 'East Los Angeles College — Professor & Head Baseball Coach, Kinesiology | Athletics',
               },
               {
                 quote: '"I bought two. One for my son, one for the team. Best investment I\'ve made in training equipment."',
