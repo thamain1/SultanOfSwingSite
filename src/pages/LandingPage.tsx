@@ -358,7 +358,7 @@ export default function LandingPage() {
                 </svg>
               </a>
               <a
-                href="https://www.youtube.com/@SultanofSwing-q6i"
+                href="https://www.youtube.com/@SultanofSwingAI"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Sultan of Swing on YouTube"
