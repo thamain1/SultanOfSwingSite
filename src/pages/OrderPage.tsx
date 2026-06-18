@@ -4,6 +4,7 @@ import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-
 import { stripePromise } from "../lib/stripe";
 import { useCart } from "../lib/cart";
 import { PRODUCTS, formatPrice } from "../lib/products";
+import Footer from "../components/Footer";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -532,6 +533,8 @@ export default function OrderPage() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

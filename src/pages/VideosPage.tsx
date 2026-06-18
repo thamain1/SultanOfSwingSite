@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 const oswald = { fontFamily: 'Oswald, sans-serif' }
 
@@ -92,6 +93,8 @@ export default function VideosPage() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

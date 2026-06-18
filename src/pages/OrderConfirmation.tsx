@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "../lib/cart";
+import Footer from "../components/Footer";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -86,6 +87,8 @@ export default function OrderConfirmation() {
           </>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
