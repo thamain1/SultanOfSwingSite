@@ -569,7 +569,16 @@ export default function OrderPage() {
         <div className="mb-16">
           <p className="text-orange-500 text-xs tracking-[0.4em] uppercase mb-2" style={oswald}>OFFICIAL GEAR</p>
           <h1 style={oswald} className="text-4xl font-bold uppercase mb-2">SHOP</h1>
-          <p className="text-gray-500 text-sm mb-8 tracking-widest">Select your training equipment below</p>
+          <p className="text-gray-500 text-sm mb-3 tracking-widest">Select your training equipment below</p>
+          <p className="text-sm mb-8 leading-relaxed max-w-2xl">
+            <span style={oswald} className="text-orange-500 tracking-widest uppercase">
+              Flexible purchasing options
+            </span>
+            <span className="text-gray-400">
+              {" "}available at checkout. Pay in full today, or split your order into monthly
+              payments with Affirm.
+            </span>
+          </p>
 
           {/* Main units */}
           <h3 style={oswald} className="text-sm text-gray-400 tracking-widest uppercase mb-4 border-b border-white/10 pb-2">
