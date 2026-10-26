@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { PRODUCTS } from "../lib/products";
-import { SALES_PHONE } from "../lib/contact";
+import { SALES_PHONE, SALES_EMAIL, pricingMailto } from "../lib/contact";
 import Footer from "../components/Footer";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
-// Online ordering is off: pricing and orders are by phone only. The full
+// Online ordering is off: pricing and orders are by phone or email only. The full
 // cart + Stripe checkout is kept, unimported, in src/checkout/Checkout.tsx.
 
 /* ─── Product Card ─── */
@@ -27,13 +27,20 @@ function ProductCard({ name, model, image, description, category }: {
         <p className="text-gray-500 text-[10px] tracking-widest uppercase">{model}</p>
         <h3 style={oswald} className="text-white font-bold tracking-wide mt-1 text-lg leading-tight">{name}</h3>
         <p className="text-gray-400 text-xs mt-2 leading-relaxed flex-1">{description}</p>
-        <div className="mt-4 pt-4 border-t border-white/10">
+        <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
           <a
             href={`tel:${SALES_PHONE.tel}`}
             style={oswald}
-            className="block w-full text-center px-4 py-2 text-sm tracking-widest uppercase transition-all bg-orange-500 hover:bg-orange-600 text-white"
+            className="block text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 bg-orange-500 hover:bg-orange-600 hover:border-orange-600 text-white"
           >
             Call for Pricing
+          </a>
+          <a
+            href={pricingMailto(name)}
+            style={oswald}
+            className="block text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 text-orange-500 hover:bg-orange-500/10"
+          >
+            Email for Pricing
           </a>
         </div>
       </div>
@@ -66,12 +73,16 @@ export default function OrderPage() {
           {/* Call for pricing */}
           <div className="border border-orange-500/40 border-l-2 border-l-orange-500 bg-gradient-to-r from-orange-500/10 to-transparent p-5 mb-10 max-w-2xl">
             <p style={oswald} className="text-white text-sm font-bold uppercase tracking-[0.2em] mb-2">
-              Call for Pricing
+              Call or Email for Pricing
             </p>
             <p className="text-gray-300 text-sm leading-relaxed">
               For pricing and to place an order, give us a call at{" "}
               <a href={`tel:${SALES_PHONE.tel}`} style={oswald} className="text-orange-500 hover:text-orange-400 tracking-widest whitespace-nowrap">
                 {SALES_PHONE.display}
+              </a>{" "}
+              or email{" "}
+              <a href={pricingMailto()} className="text-orange-500 hover:text-orange-400 break-words">
+                {SALES_EMAIL}
               </a>
               .
             </p>
