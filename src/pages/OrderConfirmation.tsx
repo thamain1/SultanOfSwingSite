@@ -1,22 +1,12 @@
-import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useCart } from "../lib/cart";
 import Footer from "../components/Footer";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
 export default function OrderConfirmation() {
   const [params] = useSearchParams();
-  const { clearCart } = useCart();
   const paymentIntent = params.get("payment_intent");
   const status = params.get("redirect_status");
-
-  // Clear the cart on successful payment
-  useEffect(() => {
-    if (status === "succeeded") {
-      clearCart();
-    }
-  }, [status, clearCart]);
 
   const isSuccess = status === "succeeded";
 
