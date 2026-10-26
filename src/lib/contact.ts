@@ -1,8 +1,7 @@
 // Sales contact shown wherever the site says "call / email for pricing".
-// TODO: phone is a placeholder until Rick confirms the number. Do not deploy with this value.
 export const SALES_PHONE = {
-  display: "(000) 000-0000",
-  tel: "+10000000000",
+  display: "(818) 371-9006",
+  tel: "+18183719006",
 };
 
 // Same inbox as the footer's Contact link
