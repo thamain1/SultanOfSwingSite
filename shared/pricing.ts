@@ -5,39 +5,34 @@
 // total the shopper sees is computed by the same code that sets the charge.
 // All money is integer cents.
 
-export type PromoTier = "standard" | "pack";
 export type ShippingType = "fedex" | "usps";
 
 export interface PriceEntry {
   /** list price, cents */
   price: number;
-  /** extras discount tier under the promo code */
-  promoTier: PromoTier;
   /** carrier class: large stands ship FedEx, everything else USPS */
   shippingType: ShippingType;
-  /** flat price with the promo code, cents; replaces the tier discount */
+  /** flat price with the promo code, cents. Only the two stands have one. */
   promoPrice?: number;
 }
 
 export const PROMO_CODE = "PLATOS#1";
 
-/** Stands cost this flat amount (cents) with PROMO_CODE. Does not expire. */
+/**
+ * Stands cost this flat amount (cents) with PROMO_CODE. Does not expire. The code
+ * discounts ONLY the two stands: plate, cable packs and complete kits are always
+ * full list price (Rick via Jesse, 2026-11-25).
+ */
 export const STAND_PROMO_PRICE = 35000;
 
 export const PRICE_TABLE: Record<string, PriceEntry> = {
-  "sb-1000": { price: 49500, promoTier: "standard", shippingType: "fedex", promoPrice: STAND_PROMO_PRICE },
-  "bb-2000": { price: 48950, promoTier: "standard", shippingType: "fedex", promoPrice: STAND_PROMO_PRICE },
-  "pc-plate": { price: 4500, promoTier: "standard", shippingType: "usps" },
-  "sb-pk": { price: 4850, promoTier: "pack", shippingType: "usps" },
-  "bb-pk": { price: 4250, promoTier: "pack", shippingType: "usps" },
-  "bb-complete": { price: 5000, promoTier: "pack", shippingType: "usps" },
-  "sb-complete": { price: 5350, promoTier: "pack", shippingType: "usps" },
-};
-
-/** Tier discount for extras under the promo code. */
-export const PROMO_DISCOUNTS: Record<PromoTier, number> = {
-  standard: 0.1, // pc-plate
-  pack: 0.2, // cable and complete packs
+  "sb-1000": { price: 49500, shippingType: "fedex", promoPrice: STAND_PROMO_PRICE },
+  "bb-2000": { price: 49500, shippingType: "fedex", promoPrice: STAND_PROMO_PRICE },
+  "pc-plate": { price: 4500, shippingType: "usps" },
+  "sb-pk": { price: 4850, shippingType: "usps" },
+  "bb-pk": { price: 4250, shippingType: "usps" },
+  "bb-complete": { price: 5000, shippingType: "usps" },
+  "sb-complete": { price: 5350, shippingType: "usps" },
 };
 
 export const MAX_QTY_PER_ITEM = 20;
@@ -177,9 +172,8 @@ export function validateItems(raw: unknown): ItemsResult {
 /** Price of one unit of a product (cents) under the given promo state. */
 export function unitPrice(id: string, promoApplied: boolean): number {
   const entry = PRICE_TABLE[id];
-  if (!promoApplied) return entry.price;
-  if (entry.promoPrice !== undefined) return Math.min(entry.price, entry.promoPrice);
-  return entry.price - Math.round(entry.price * PROMO_DISCOUNTS[entry.promoTier]);
+  if (!promoApplied || entry.promoPrice === undefined) return entry.price;
+  return Math.min(entry.price, entry.promoPrice);
 }
 
 export interface CartTotals {

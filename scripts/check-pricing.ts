@@ -156,15 +156,28 @@ async function main(): Promise<void> {
   await expectAmount("SB-1000 PLATOS#1", [SB], "PLATOS#1", FEDEX, 35000 + FEDEX);
   await expectAmount("SB-1000 platos#1 (lowercase)", [SB], "platos#1", FEDEX, 35000 + FEDEX);
   await expectAmount("SB-1000 ' platos#1 ' (spaces)", [SB], " platos#1 ", FEDEX, 35000 + FEDEX);
-  await expectAmount("BB-2000 no code", [BB], undefined, FEDEX, 48950 + FEDEX);
+  await expectAmount("BB-2000 no code (list 49500)", [BB], undefined, FEDEX, 49500 + FEDEX);
   await expectAmount("BB-2000 PLATOS#1", [BB], "PLATOS#1", FEDEX, 35000 + FEDEX);
   await expectAmount("SB x2 + BB x1 PLATOS#1 (3 boxes)", [{ id: "sb-1000", qty: 2 }, BB], "PLATOS#1", FEDEX * 3, 105000 + FEDEX * 3);
   await expectAmount(
     "stand + pc-plate + sb-pk PLATOS#1",
     [SB, { id: "pc-plate", qty: 1 }, { id: "sb-pk", qty: 1 }],
-    "PLATOS#1", FEDEX + USPS, 35000 + 4050 + 3880 + FEDEX + USPS,
+    "PLATOS#1", FEDEX + USPS, 35000 + 4500 + 4850 + FEDEX + USPS, // code discounts the stand only
   );
-  await expectAmount("extras only bb-complete PLATOS#1", [{ id: "bb-complete", qty: 1 }], "PLATOS#1", USPS, 4000 + USPS);
+  await expectAmount("extras only bb-complete PLATOS#1 (no discount)", [{ id: "bb-complete", qty: 1 }], "PLATOS#1", USPS, 5000 + USPS);
+  {
+    // the code never changes the price of any extra: with code == without code == list
+    const list: [string, number][] = [["pc-plate", 4500], ["sb-pk", 4850], ["bb-pk", 4250], ["bb-complete", 5000], ["sb-complete", 5350]];
+    for (const [id, price] of list) {
+      const withCode = await post(req([{ id, qty: 2 }], { promoCode: "PLATOS#1", shippingTotal: USPS }));
+      const without = await post(req([{ id, qty: 2 }], { shippingTotal: USPS }));
+      const a = withCode.stripe ? Number(withCode.stripe.get("amount")) : NaN;
+      const b2 = without.stripe ? Number(without.stripe.get("amount")) : NaN;
+      check(`${id} x2 is list price ${price * 2} + USPS with and without the code`, a === price * 2 + USPS && b2 === a && withCode.stripe?.get("metadata[discount]") === "0", `with=${a} without=${b2}`);
+    }
+    const mixed = await post(req([BB, { id: "pc-plate", qty: 1 }, { id: "bb-pk", qty: 1 }], { promoCode: "PLATOS#1", shippingTotal: FEDEX + USPS }));
+    check("stand + plate + bb-pk with code: metadata discount is the stand's 14500 only", mixed.stripe?.get("metadata[discount]") === "14500" && Number(mixed.stripe?.get("amount")) === 35000 + 4500 + 4250 + FEDEX + USPS, `disc=${mixed.stripe?.get("metadata[discount]")}`);
+  }
   await expectAmount("extras only, no code", [{ id: "bb-complete", qty: 1 }], undefined, USPS, 5000 + USPS);
   await expectAmount("wrong code PLATOS#2 = full price", [SB], "PLATOS#2", FEDEX, 49500 + FEDEX);
   await expectAmount("non-string promoCode = full price", [SB], 5 as unknown as string, FEDEX, 49500 + FEDEX);

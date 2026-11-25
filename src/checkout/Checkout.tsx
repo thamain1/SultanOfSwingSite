@@ -226,19 +226,30 @@ function CheckoutForm() {
   const quoteKey = `${zipTrim}|${form.state}|${items.map((i) => `${i.product.id}x${i.qty}`).join(",")}`;
   const quoteFailed = hasLargeItem && destinationValid && quoteFailedKey === quoteKey;
   const quoteLoading = hasLargeItem && destinationValid && shippingCost === null && !quoteFailed;
+  // Place Order stays disabled until a fresh quote is on screen (also when a quote failed).
+  const needsQuote = hasLargeItem && (shippingCost === null || quoteFailed);
 
   useEffect(() => {
     if (!hasLargeItem) return;
     if (!destinationValid) {
-      // ZIP or state is no longer usable: forget the quote so a stale number is never shown or sent.
-      if (lastQuoteKeyRef.current !== "") {
-        lastQuoteKeyRef.current = "";
-        setShippingCost(null);
-      }
+      // ZIP or state is not usable: whatever shipping number is on screen no longer
+      // belongs to this destination, so clear it (the button then needs a new quote).
+      lastQuoteKeyRef.current = "";
+      if (shippingCost !== null) setShippingCost(null);
       return;
     }
-    // Re-quote when the destination OR the cart changes (a cart edit clears the
-    // shown shipping, so the same ZIP must be quoted again). A key is remembered
+    // The destination or the cart changed since the number on screen was quoted:
+    // clear it BEFORE asking again, so a stale quote is never shown next to an
+    // enabled Place Order button.
+    if (lastQuoteKeyRef.current !== "" && quoteKey !== lastQuoteKeyRef.current) {
+      lastQuoteKeyRef.current = "";
+      if (shippingCost !== null) {
+        setShippingCost(null);
+        return; // this effect runs again with the cleared cost and fetches
+      }
+    }
+    // Skip only when this exact destination + cart already has its quote, or its
+    // quote failed (the Retry button clears quoteFailedKey). A key is remembered
     // only after a successful quote, so a cancelled or failed request is retried.
     if ((quoteKey === lastQuoteKeyRef.current && shippingCost !== null) || quoteKey === quoteFailedKey) return;
 
@@ -344,7 +355,7 @@ function CheckoutForm() {
           line1: form.address,
           city: form.city,
           state: form.state,
-          postal_code: form.zip,
+          postal_code: zipTrim,
           country: "US",
         },
       };
@@ -550,7 +561,7 @@ function CheckoutForm() {
                       line1: form.address,
                       city: form.city,
                       state: form.state,
-                      postal_code: form.zip,
+                      postal_code: zipTrim,
                       country: "US",
                     },
                   },
@@ -608,19 +619,19 @@ function CheckoutForm() {
         )}
         <div className="flex justify-between text-sm text-gray-400">
           <span>Shipping</span>
-          {shippingCost === null ? (
-            quoteFailed ? (
-              <span className="text-red-400 text-xs text-right">
-                Couldn&apos;t get shipping.{" "}
-                <button
-                  type="button"
-                  onClick={() => setQuoteFailedKey("")}
-                  className="text-orange-500 hover:text-orange-400 underline tracking-widest uppercase"
-                >
-                  Retry
-                </button>
-              </span>
-            ) : quoteLoading ? (
+          {quoteFailed ? (
+            <span className="text-red-400 text-xs text-right">
+              Couldn&apos;t get shipping.{" "}
+              <button
+                type="button"
+                onClick={() => setQuoteFailedKey("")}
+                className="text-orange-500 hover:text-orange-400 underline tracking-widest uppercase"
+              >
+                Retry
+              </button>
+            </span>
+          ) : shippingCost === null ? (
+            quoteLoading ? (
               <span className="text-amber-400 text-xs">Calculating shipping...</span>
             ) : (
               <span className="text-amber-400 text-xs">
@@ -647,13 +658,13 @@ function CheckoutForm() {
 
       <button
         type="submit"
-        disabled={!stripe || isProcessing || items.length === 0 || (hasLargeItem && shippingCost === null)}
+        disabled={!stripe || isProcessing || items.length === 0 || needsQuote}
         style={oswald}
         className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-5 text-xl tracking-widest uppercase transition-all hover:scale-[1.01] shadow-lg shadow-orange-500/20"
       >
         {isProcessing
           ? "PROCESSING..."
-          : shippingCost === null && hasLargeItem
+          : needsQuote
           ? quoteLoading
             ? "CALCULATING SHIPPING..."
             : quoteFailed

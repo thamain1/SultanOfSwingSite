@@ -154,7 +154,7 @@ const shop = () => '<div class="pad">'+banner()+'<div style="height:22px"></div>
  + '<p class="kick">Official gear</p><h2 class="shop-h">Shop</h2><p class="sub">Browse our training equipment below</p>'+questions()
  + '<p class="cat">Training Systems</p><div class="grid two" style="margin-bottom:22px">'
  + standCard('Sultan of Swing — Softball','SB-1000','sultan-softball.jpeg','$495.00')
- + standCard('Sultan of Swing — Baseball','BB-2000','sultan-baseball.jpeg','$489.50')
+ + standCard('Sultan of Swing — Baseball','BB-2000','sultan-baseball.jpeg','$495.00')
  + '</div><p class="cat">Accessories &amp; Replacement Parts</p><div class="grid three">'
  + extraCard('Portable Plate','PC-PLATE','portable-plate.jpeg','$45.00',true)
  + extraCard('Softball Bungees &amp; Rope Cables Pack','SB-PK','softball-cable-pack.png','$48.50',false)
@@ -163,9 +163,9 @@ const shop = () => '<div class="pad">'+banner()+'<div style="height:22px"></div>
 
 const cart = () => '<div class="cart"><h4>Your Cart</h4>'
  + '<div class="line"><img src="'+IMG+'sultan-softball.jpeg" alt=""><div><p class="n">Sultan of Swing — Softball</p><p class="p"><s>$495.00</s>$350.00</p><div class="qty"><b>−</b>1<b>+</b><span style="margin-left:auto;color:#666">Remove</span></div></div></div>'
- + '<div class="line"><img src="'+IMG+'portable-plate.jpeg" alt=""><div><p class="n">Portable Plate</p><p class="p"><s>$45.00</s>$40.50</p><div class="qty"><b>−</b>1<b>+</b><span style="margin-left:auto;color:#666">Remove</span></div></div></div>'
+ + '<div class="line"><img src="'+IMG+'portable-plate.jpeg" alt=""><div><p class="n">Portable Plate</p><p class="p">$45.00</p><div class="qty"><b>−</b>1<b>+</b><span style="margin-left:auto;color:#666">Remove</span></div></div></div>'
  + '<div style="margin:14px 0"><label class="l">Promo Code</label><div class="input">PLATOS#1</div><p class="ok">PLATOS#1 applied: stands $350</p></div>'
- + '<div class="tot"><div><span>Subtotal</span><span>$540.00</span></div><div class="g"><span>Discount</span><span>−$149.50</span></div><div><span>Shipping</span><span style="color:#fff">$111.60</span></div><div class="big"><span>TOTAL</span><span>$502.10</span></div></div></div>'
+ + '<div class="tot"><div><span>Subtotal</span><span>$540.00</span></div><div class="g"><span>Discount</span><span>−$145.00</span></div><div><span>Shipping</span><span style="color:#fff">$111.60</span></div><div class="big"><span>TOTAL</span><span>$506.60</span></div></div></div>'
  + '<div style="height:12px"></div><div class="cart" style="padding-top:14px"><label class="l">Promo Code (before a code is entered)</label><div class="input" style="border-color:rgba(255,255,255,.1);color:#666">Enter code</div><p class="hint">Have a code? Try PLATOS#1</p></div>';
 
 const methods = (sel) => {
@@ -176,7 +176,7 @@ const panel = (sel) => sel==='card'
  ? '<div class="cardfake"><div class="f">Card number</div><div class="f">MM / YY &nbsp;&nbsp;&nbsp; CVC</div><div class="f">Country</div>(Stripe card form renders here)</div>'
  : '<div class="panel"><p class="t">How '+(sel==='affirm'?'Affirm':'Klarna')+' works</p><ol><li>No card details needed on this page.</li><li>Click <b>Place Order</b> below to continue to '+(sel==='affirm'?'Affirm':'Klarna')+'.</li><li>Choose the '+(sel==='affirm'?'payment plan':'payment option')+' that fits, then confirm to finish your order.</li></ol></div>';
 const payment = (sel) => '<div class="pad"><div class="flex-box"><p class="t">Flexible Payment Options</p><p>Pay in full today, or split your order into payments with Affirm or Klarna. You will see the available plans and the payment amounts from the provider before your order is final.</p><div class="msg">Provider monthly-payment messaging from Stripe renders here (Affirm and Klarna). No hand-written rates or amounts.</div></div>'
- + methods(sel)+panel(sel)+'<div class="place">Place Order — $502.10</div></div>';
+ + methods(sel)+panel(sel)+'<div class="place">Place Order — $506.60</div></div>';
 
 const checkout = () => '<div class="pad"><p class="kick">Almost there</p><h2 class="co-h">Checkout</h2><p class="sub">Complete your purchase below</p><div class="co"><div><div class="state" style="margin-top:0">(contact + shipping fields unchanged)</div>'+payment('card').replace('<div class="pad">','<div>')+'</div><div>'+cart()+'</div></div></div>';
 
