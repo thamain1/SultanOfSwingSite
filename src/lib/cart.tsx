@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import { PRODUCTS, type Product } from "./products";
-import { PRICES, PROMO_CODES, PROMO_DISCOUNTS, USPS_FLAT_RATES } from "./pricing";
+import { MAX_QTY_PER_ITEM, USPS_RATES, isLargeItem, isValidPromoCode, priceCart, PROMO_CODE, STAND_PROMO_PRICE, formatDollars } from "./pricing";
 
 export interface CartItem {
   product: Product;
@@ -38,7 +38,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const existing = prev.find((i) => i.product.id === productId);
       if (existing) {
         return prev.map((i) =>
-          i.product.id === productId ? { ...i, qty: i.qty + 1 } : i
+          i.product.id === productId ? { ...i, qty: Math.min(i.qty + 1, MAX_QTY_PER_ITEM) } : i
         );
       }
       const product = PRODUCTS.find((p) => p.id === productId);
@@ -59,7 +59,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } else {
       setItems((prev) =>
         prev.map((i) =>
-          i.product.id === productId ? { ...i, qty } : i
+          i.product.id === productId ? { ...i, qty: Math.min(qty, MAX_QTY_PER_ITEM) } : i
         )
       );
     }
@@ -72,32 +72,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setShippingCost(null);
   }, []);
 
-  const appliedPromo = PROMO_CODES[promoCode.toUpperCase()] || null;
+  const appliedPromo = isValidPromoCode(promoCode)
+    ? { label: `${PROMO_CODE} applied: stands ${formatDollars(STAND_PROMO_PRICE)}` }
+    : null;
 
-  const subtotal = items.reduce((sum, i) => sum + PRICES[i.product.id] * i.qty, 0);
-  const discount = appliedPromo
-    ? items.reduce((sum, i) => {
-        const rate = PROMO_DISCOUNTS[i.product.promoTier];
-        return sum + Math.round(PRICES[i.product.id] * i.qty * rate);
-      }, 0)
-    : 0;
-
-  const hasLargeItem = items.some((i) => i.product.shippingType === "fedex");
-  const hasSmallItem = items.some((i) => i.product.shippingType === "usps");
+  const hasLargeItem = items.some((i) => isLargeItem(i.product.id));
+  const hasSmallItem = items.some((i) => !isLargeItem(i.product.id));
 
   // Auto-calculate USPS shipping for small-only orders
   const resolvedShipping = (() => {
     if (items.length === 0) return 0;
     if (shippingCost !== null) return shippingCost;
     // If only small items, use USPS medium flat rate as default
-    if (!hasLargeItem && hasSmallItem) return USPS_FLAT_RATES.medium;
+    if (!hasLargeItem && hasSmallItem) return USPS_RATES.medium;
     return null; // needs FedEx quote
   })();
 
-  const total =
-    subtotal -
-    discount +
-    (resolvedShipping ?? 0);
+  // Same function the server uses to set the charge (shared/pricing.ts).
+  const { subtotal, discount, total } = priceCart(
+    items.map((i) => ({ id: i.product.id, qty: i.qty })),
+    promoCode,
+    resolvedShipping ?? 0,
+  );
 
   const itemCount = items.reduce((sum, i) => sum + i.qty, 0);
 

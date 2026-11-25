@@ -1,15 +1,10 @@
-/* ─── Online checkout (dormant) ───
-   Rick asked for "call for pricing" in Oct 2026, so the shop no longer sells
-   online. This module is the full cart + Stripe/Affirm checkout, kept intact
-   but imported by nothing: while it stays unimported, Vite leaves it (and
-   every price in ../lib/pricing) out of the public bundle.
-   To turn online ordering back on:
-     1. wrap <App> routes in <CartProvider> (../lib/cart) again;
-     2. render <CheckoutSection /> below the shop in pages/OrderPage.tsx;
-     3. swap the card's "Call for pricing" button for an add-to-cart button
-        that calls useCart().addItem(id) and shows formatPrice(PRICES[id]);
-     4. restore clearCart() on success in pages/OrderConfirmation.tsx.
-   The Pages Functions in functions/api/ were left deployed throughout. */
+/* ─── Online checkout (LIVE) ───
+   Online ordering is back on (WO 0001). The routes are wrapped in
+   <CartProvider> (App.tsx), <CheckoutSection /> renders below the shop in
+   pages/OrderPage.tsx, shop cards add to the cart, and the confirmation page
+   clears it. Pay by card, Affirm or Klarna. Prices, the PLATOS#1 promo and the
+   cart math live in shared/pricing.ts, the same code the Pages Functions use to
+   set the charge; shipping is quoted and re-checked server-side. */
 import { useState, useEffect, useRef, Component, type ReactNode } from "react";
 import {
   Elements,
@@ -20,7 +15,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { stripePromise } from "../lib/stripe";
 import { useCart } from "../lib/cart";
-import { PRICES, formatPrice } from "../lib/pricing";
+import { PROMO_CODE, formatPrice, unitPrice } from "../lib/pricing";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -29,7 +24,7 @@ const oswald = { fontFamily: "Oswald, sans-serif" };
 const AFFIRM_MIN_CENTS = 3500;
 
 /* ─── Failure-isolating boundary ───
-   Affirm's promo messaging is a nice-to-have. If Stripe.js throws while
+   The Affirm / Klarna promo messaging is a nice-to-have. If Stripe.js throws while
    creating that element, the boundary swallows it so the checkout form
    itself keeps rendering. */
 class QuietBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -42,13 +37,14 @@ class QuietBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
-/* ─── Affirm promotional messaging ───
-   Stripe-hosted element that renders Affirm's own estimated monthly payment
-   and disclosures, which keeps us inside Affirm's marketing-compliance rules
-   instead of hardcoding a rate or term we can't substantiate.
+/* ─── Affirm + Klarna promotional messaging ───
+   Stripe-hosted element that renders each provider's own estimated monthly
+   payment and disclosures, which keeps us inside their marketing-compliance
+   rules instead of hardcoding a rate or term we can't substantiate. Stripe
+   shows only the providers the amount qualifies for.
    Mounted in its own Elements group: the checkout group is created in
    deferred-intent `mode`, which doesn't support this element type. */
-function AffirmMessaging({ amount }: { amount: number }) {
+function PaymentMessaging({ amount }: { amount: number }) {
   return (
     <QuietBoundary>
       <Elements stripe={stripePromise}>
@@ -57,7 +53,7 @@ function AffirmMessaging({ amount }: { amount: number }) {
             amount,
             currency: "USD",
             countryCode: "US",
-            paymentMethodTypes: ["affirm"],
+            paymentMethodTypes: ["affirm", "klarna"],
             logoColor: "white",
           }}
         />
@@ -90,7 +86,12 @@ function CartSummary() {
                 <img src={product.image} alt={product.name} className="w-16 h-16 object-contain bg-white p-1 border border-white/10 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p style={oswald} className="text-white font-bold text-sm tracking-wide truncate">{product.name}</p>
-                  <p className="text-orange-500 text-sm font-bold">{formatPrice(PRICES[product.id])}</p>
+                  <p className="text-orange-500 text-sm font-bold">
+                    {appliedPromo && unitPrice(product.id, true) !== unitPrice(product.id, false) && (
+                      <span className="text-gray-500 line-through font-normal mr-2">{formatPrice(unitPrice(product.id, false))}</span>
+                    )}
+                    {formatPrice(unitPrice(product.id, appliedPromo !== null))}
+                  </p>
                   <div className="flex items-center gap-2 mt-1">
                     <button onClick={() => updateQty(product.id, qty - 1)}
                       className="w-6 h-6 border border-white/20 text-white text-xs hover:border-orange-500 transition-colors flex items-center justify-center">−</button>
@@ -112,10 +113,13 @@ function CartSummary() {
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder="Enter code"
+              autoComplete="off"
               className="w-full bg-zinc-900 border border-white/10 focus:border-orange-500 text-white px-3 py-2 text-sm outline-none transition-colors"
             />
-            {appliedPromo && (
+            {appliedPromo ? (
               <p className="text-green-400 text-xs mt-1">{appliedPromo.label}</p>
+            ) : (
+              <p className="text-gray-500 text-xs mt-1">Have a code? Try {PROMO_CODE}</p>
             )}
           </div>
 
@@ -172,8 +176,8 @@ function CheckoutForm() {
   const { total, items, subtotal, discount, shippingCost, promoCode, setShippingCost, hasLargeItem } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState<"card" | "affirm">("card");
-  const lastZipRef = useRef("");
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<"card" | "affirm" | "klarna">("card");
+  const lastQuoteKeyRef = useRef("");
 
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "",
@@ -188,13 +192,17 @@ function CheckoutForm() {
   // Derived, not synced: if the cart drops below Affirm's floor while Affirm is
   // selected, the effective method falls back to card immediately, so we can
   // never submit a method Stripe would reject.
-  const paymentMethod = affirmEligible ? paymentMethodChoice : "card";
+  const paymentMethod =
+    paymentMethodChoice === "affirm" && !affirmEligible ? "card" : paymentMethodChoice;
 
   // Fetch FedEx shipping rate when ZIP + state are filled for large items
   useEffect(() => {
     if (!hasLargeItem || form.zip.length < 5 || !form.state) return;
-    if (form.zip === lastZipRef.current) return;
-    lastZipRef.current = form.zip;
+    // Re-quote when the destination OR the cart changes (a cart edit clears the
+    // shown shipping, so the same ZIP must be quoted again).
+    const quoteKey = `${form.zip}|${form.state}|${items.map((i) => `${i.product.id}x${i.qty}`).join(",")}`;
+    if (quoteKey === lastQuoteKeyRef.current) return;
+    lastQuoteKeyRef.current = quoteKey;
 
     const controller = new AbortController();
     fetch("/api/calculate-shipping", {
@@ -224,7 +232,7 @@ function CheckoutForm() {
     setError(null);
 
     try {
-      // Card path validates the PaymentElement; Affirm has no inline form.
+      // Card path validates the PaymentElement; Affirm and Klarna have no inline form.
       if (paymentMethod === "card") {
         const { error: submitError } = await elements.submit();
         if (submitError) {
@@ -255,14 +263,28 @@ function CheckoutForm() {
         }),
       });
 
-      const { clientSecret, error: serverError } = await res.json();
-      if (serverError) {
-        setError(serverError);
+      const created = await res.json();
+      const { clientSecret, error: serverError } = created;
+
+      // The server computed a different shipping amount than the one shown.
+      // Show the server's number and make the shopper press pay again, so a
+      // total they did not see is never charged.
+      if (res.status === 409 && typeof created.shipping === "number") {
+        setShippingCost(created.shipping);
+        setError(
+          `Shipping for this order is ${formatPrice(created.shipping)}. Your total was updated. Please review it and press Place Order again.`,
+        );
         setIsProcessing(false);
         return;
       }
 
-      // Confirm payment — branch by method since Affirm has no PaymentElement
+      if (serverError || !clientSecret) {
+        setError(serverError || "Could not start your payment. Please try again.");
+        setIsProcessing(false);
+        return;
+      }
+
+      // Confirm payment: branch by method since Affirm and Klarna have no PaymentElement
       const returnUrl = `${window.location.origin}/order/confirmation`;
       const billingDetails = {
         name: `${form.firstName} ${form.lastName}`,
@@ -283,6 +305,17 @@ function CheckoutForm() {
               payment_method: { billing_details: billingDetails },
               return_url: returnUrl,
             })
+          : paymentMethod === "klarna"
+          ? await stripe.confirmKlarnaPayment(clientSecret, {
+              payment_method: {
+                billing_details: {
+                  name: billingDetails.name,
+                  email: billingDetails.email,
+                  address: { country: "US" },
+                },
+              },
+              return_url: returnUrl,
+            })
           : await stripe.confirmPayment({
               elements,
               clientSecret,
@@ -293,7 +326,15 @@ function CheckoutForm() {
             });
 
       if (stripeError) {
-        setError(stripeError.message || "Payment failed. Please try again.");
+        if (paymentMethod === "klarna") {
+          // Stripe declined Klarna for this order: send the shopper back to card.
+          setPaymentMethodChoice("card");
+          setError(
+            `${stripeError.message || "Klarna is not available for this order."} You can pay by card or Affirm instead.`,
+          );
+        } else {
+          setError(stripeError.message || "Payment failed. Please try again.");
+        }
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -355,18 +396,18 @@ function CheckoutForm() {
             Flexible Payment Options
           </p>
           <p className="text-gray-300 text-sm leading-relaxed">
-            Pay in full today, or split your order into monthly payments with Affirm. You will see
-            the available plans, your rate, and the monthly amount from Affirm before your order is
+            Pay in full today, or split your order into payments with Affirm or Klarna. You will see
+            the available plans and the payment amounts from the provider before your order is
             final.
           </p>
           {affirmEligible && (
             <div className="mt-3">
-              <AffirmMessaging amount={total} />
+              <PaymentMessaging amount={total} />
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
           <button type="button" onClick={() => setPaymentMethodChoice("card")}
             aria-pressed={paymentMethod === "card"}
             className={`text-left p-4 border transition-all ${
@@ -417,10 +458,30 @@ function CheckoutForm() {
                 : `Available on orders of ${formatPrice(AFFIRM_MIN_CENTS)} or more.`}
             </span>
           </button>
+
+          <button type="button" onClick={() => setPaymentMethodChoice("klarna")}
+            aria-pressed={paymentMethod === "klarna"}
+            className={`text-left p-4 border transition-all ${
+              paymentMethod === "klarna"
+                ? "border-orange-500 bg-orange-500/10"
+                : "border-white/10 hover:border-white/30"
+            }`}>
+            <span className="flex items-center gap-2">
+              <span className={`w-3 h-3 rounded-full border flex-shrink-0 ${
+                paymentMethod === "klarna" ? "border-orange-500 bg-orange-500" : "border-white/30"
+              }`} />
+              <span style={oswald} className={`text-sm tracking-widest uppercase ${
+                paymentMethod === "klarna" ? "text-orange-500" : "text-gray-300"
+              }`}>
+                Pay with Klarna
+              </span>
+            </span>
+            <span className="block text-gray-500 text-xs mt-2 pl-5">Pay over time with Klarna.</span>
+          </button>
         </div>
 
-        {/* Stripe Payment Element — only mounted for the Card path. Affirm
-            collects everything on its own portal after redirect. */}
+        {/* Stripe Payment Element: only mounted for the Card path. Affirm and
+            Klarna collect everything on their own pages after redirect. */}
         {paymentMethod === "card" && (
           <div className="bg-zinc-900 border border-white/10 p-4 rounded">
             <PaymentElement
@@ -443,6 +504,22 @@ function CheckoutForm() {
                 },
               }}
             />
+          </div>
+        )}
+
+        {paymentMethod === "klarna" && (
+          <div className="bg-zinc-900 border border-orange-500/30 p-6 rounded">
+            <p style={oswald} className="text-white text-xs tracking-widest uppercase mb-3">
+              How Klarna works
+            </p>
+            <ol className="text-gray-400 text-sm space-y-2 list-decimal list-inside">
+              <li>No card details needed on this page.</li>
+              <li>
+                Click <span className="text-orange-500 font-semibold">Place Order</span> below to
+                continue to Klarna.
+              </li>
+              <li>Choose the payment option that fits, then confirm to finish your order.</li>
+            </ol>
           </div>
         )}
 
@@ -548,7 +625,7 @@ export function CheckoutSection() {
                     fontFamily: "Inter, sans-serif",
                   },
                 },
-                paymentMethodTypes: ["card", "affirm"],
+                paymentMethodTypes: ["card", "affirm", "klarna"],
               }}
             >
               <CheckoutForm />

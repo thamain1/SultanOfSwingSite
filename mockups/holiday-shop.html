@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup: Holiday shop (WO 0001)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--o5:#f97316;--o4:#fb923c;--o6:#ea580c;--red:#b4232c;--pine:#1f6b3a;--pine-l:#4ade80;--z9:#18181b;--z95:#09090b;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#222;color:#fff;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;padding:24px}
+  .oswald{font-family:Oswald,sans-serif}
+  h1.page{font-family:Oswald,sans-serif;font-size:26px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+  p.note{color:#aaa;font-size:13px;max-width:900px;line-height:1.5;margin-bottom:6px}
+  .section-title{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.2em;color:var(--o4);margin:36px 0 12px;font-size:15px;border-bottom:1px solid #444;padding-bottom:6px}
+  .row{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+  .col-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:6px}
+  .frame{background:#000;border:1px solid #444;overflow:hidden;position:relative}
+  .frame.desktop{width:1180px}
+  .frame.phone{width:390px}
+  .pad{padding:24px}
+  .phone .pad{padding:16px}
+
+  /* holiday banner */
+  .banner{position:relative;overflow:hidden;border:1px solid rgba(249,115,22,.45);background:linear-gradient(120deg,rgba(180,35,44,.30),rgba(0,0,0,0) 55%),linear-gradient(0deg,#0b0b0b,#0b0b0b);padding:26px 28px}
+  .phone .banner{padding:20px 16px}
+  .banner:before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:repeating-linear-gradient(135deg,var(--red) 0 12px,#f4f4f4 12px 24px,var(--pine) 24px 36px,#f4f4f4 36px 48px)}
+  .banner .kicker{font-family:Oswald,sans-serif;letter-spacing:.4em;font-size:11px;color:var(--pine-l);text-transform:uppercase;margin-top:6px}
+  .banner h2{font-family:Oswald,sans-serif;font-size:40px;line-height:1.05;text-transform:uppercase;letter-spacing:.02em;margin:8px 0}
+  .phone .banner h2{font-size:28px}
+  .banner h2 em{font-style:normal;color:var(--o5)}
+  .banner p{color:#d4d4d8;font-size:14px;line-height:1.6;max-width:640px}
+  .code-chip{display:inline-block;font-family:Oswald,sans-serif;letter-spacing:.15em;background:var(--o5);color:#000;padding:2px 10px;font-weight:700}
+  .snow{position:absolute;inset:0;pointer-events:none}
+  .snow i{position:absolute;top:-10px;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.75;animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(260px) translateX(18px)}}
+  @media (prefers-reduced-motion: reduce){.snow{display:none}}
+
+  /* landing strip */
+  .strip{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;background:linear-gradient(90deg,var(--red),#7f1d1d 50%,var(--pine));padding:9px 14px;font-family:Oswald,sans-serif;letter-spacing:.15em;text-transform:uppercase;font-size:13px}
+  .strip a{color:#000;background:var(--o5);padding:3px 12px;text-decoration:none;font-weight:700}
+  .hero-stub{height:130px;background:linear-gradient(180deg,#111,#000);display:flex;align-items:center;justify-content:center;color:#555;font-family:Oswald,sans-serif;letter-spacing:.3em;font-size:12px;text-transform:uppercase}
+
+  /* cards */
+  .grid{display:grid;gap:20px}
+  .desktop .grid.two{grid-template-columns:1fr 1fr}
+  .desktop .grid.three{grid-template-columns:1fr 1fr 1fr}
+  .card{border:1px solid rgba(255,255,255,.1);background:var(--z95);display:flex;flex-direction:column;position:relative}
+  .card.stand{border-color:rgba(249,115,22,.5)}
+  .card .img{background:#fff;height:190px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .card .img img{max-width:100%;max-height:100%;object-fit:contain;padding:8px}
+  .tag{position:absolute;top:8px;left:8px;background:var(--o5);color:#fff;font-family:Oswald,sans-serif;font-size:10px;letter-spacing:.15em;padding:2px 8px;text-transform:uppercase}
+  .ribbon{position:absolute;top:14px;right:-34px;transform:rotate(40deg);background:var(--red);color:#fff;font-family:Oswald,sans-serif;font-size:11px;letter-spacing:.2em;padding:3px 40px;text-transform:uppercase;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+  .card .body{padding:16px;display:flex;flex-direction:column;flex:1}
+  .model{font-size:10px;letter-spacing:.2em;color:#777;text-transform:uppercase}
+  .card h3{font-family:Oswald,sans-serif;font-size:18px;margin-top:4px;line-height:1.15}
+  .card .desc{color:#9ca3af;font-size:12px;line-height:1.55;margin-top:8px;flex:1}
+  .price-block{border-top:1px solid rgba(255,255,255,.1);margin-top:14px;padding-top:14px}
+  .strike{font-family:Oswald,sans-serif;font-size:19px;color:#6b7280;text-decoration:line-through}
+  .deal{font-family:Oswald,sans-serif;color:var(--o5);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:14px;margin:2px 0 12px}
+  .plain{font-family:Oswald,sans-serif;font-size:19px;margin-bottom:12px}
+  .btn{display:block;width:100%;text-align:center;font-family:Oswald,sans-serif;letter-spacing:.15em;text-transform:uppercase;font-size:14px;padding:10px;background:var(--o5);border:1px solid var(--o5);color:#fff}
+  .go{display:block;text-align:center;font-size:11px;color:var(--o5);margin-top:8px;letter-spacing:.12em}
+  .questions{color:#9ca3af;font-size:12px;margin:14px 0 26px}
+  .questions b{font-family:Oswald,sans-serif;color:var(--o5);letter-spacing:.12em;font-weight:500}
+  .questions span{color:var(--o5)}
+  .kick{font-family:Oswald,sans-serif;color:var(--o5);letter-spacing:.4em;font-size:11px;text-transform:uppercase}
+  .shop-h{font-family:Oswald,sans-serif;font-size:36px;text-transform:uppercase;margin:6px 0}
+  .sub{color:#777;font-size:13px;letter-spacing:.15em;margin-bottom:14px}
+  .cat{font-family:Oswald,sans-serif;color:#9ca3af;font-size:13px;letter-spacing:.15em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px;margin:6px 0 14px}
+
+  /* cart */
+  .cart{background:var(--z95);border:1px solid rgba(255,255,255,.1);padding:22px}
+  .phone .cart{padding:16px}
+  .cart h4{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.18em;font-size:17px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:10px;margin-bottom:14px}
+  .line{display:flex;gap:12px;margin-bottom:14px}
+  .line img{width:60px;height:60px;object-fit:contain;background:#fff;padding:3px;border:1px solid rgba(255,255,255,.1)}
+  .line .n{font-family:Oswald,sans-serif;font-size:14px}
+  .line .p{font-size:13px;font-weight:700;color:var(--o5)}
+  .line .p s{color:#6b7280;font-weight:400;margin-right:6px}
+  .qty{display:flex;gap:8px;align-items:center;font-size:12px;margin-top:4px}
+  .qty b{border:1px solid rgba(255,255,255,.2);width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:400}
+  label.l{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#777;margin-bottom:4px}
+  .input{background:var(--z9);border:1px solid var(--o5);padding:8px 10px;font-size:13px;color:#fff}
+  .ok{color:#4ade80;font-size:12px;margin-top:5px}
+  .hint{color:#777;font-size:12px;margin-top:5px}
+  .tot{border-top:1px solid rgba(255,255,255,.1);padding-top:12px;margin-top:14px;font-size:13px;color:#9ca3af}
+  .tot div{display:flex;justify-content:space-between;margin-bottom:7px}
+  .tot .g{color:#4ade80}
+  .tot .big{font-family:Oswald,sans-serif;font-size:18px;color:#fff;border-top:1px solid rgba(255,255,255,.1);padding-top:10px}
+  .tot .big span:last-child{color:var(--o5)}
+  .desktop .co{display:grid;grid-template-columns:3fr 2fr;gap:30px}
+  .co-h{font-family:Oswald,sans-serif;font-size:32px;text-transform:uppercase;margin:6px 0}
+
+  /* payment */
+  .flex-box{border:1px solid rgba(249,115,22,.4);border-left:2px solid var(--o5);background:linear-gradient(90deg,rgba(249,115,22,.1),transparent);padding:16px;margin-bottom:16px}
+  .flex-box .t{font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+  .flex-box p{color:#d1d5db;font-size:13px;line-height:1.55}
+  .msg{margin-top:10px;border:1px dashed rgba(255,255,255,.3);padding:9px 11px;font-size:12px;color:#aaa;background:rgba(255,255,255,.03)}
+  .methods{display:grid;gap:10px;margin-bottom:14px}
+  .desktop .methods{grid-template-columns:1fr 1fr 1fr}
+  .m{border:1px solid rgba(255,255,255,.1);padding:13px;text-align:left}
+  .m.sel{border-color:var(--o5);background:rgba(249,115,22,.1)}
+  .m .h{display:flex;align-items:center;gap:8px;font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#d1d5db}
+  .m.sel .h{color:var(--o5)}
+  .m .dot{width:11px;height:11px;border-radius:50%;border:1px solid rgba(255,255,255,.3);flex:none}
+  .m.sel .dot{background:var(--o5);border-color:var(--o5)}
+  .m .s{display:block;color:#777;font-size:12px;margin:7px 0 0 19px}
+  .pill{margin-left:auto;background:var(--o5);color:#000;font-size:10px;font-weight:700;padding:1px 7px;letter-spacing:.1em}
+  .panel{background:var(--z9);border:1px solid rgba(249,115,22,.3);padding:16px;font-size:13px;color:#9ca3af}
+  .panel .t{font-family:Oswald,sans-serif;color:#fff;font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+  .panel ol{padding-left:18px;line-height:1.8}
+  .panel ol b{color:var(--o5)}
+  .cardfake{background:var(--z9);border:1px solid rgba(255,255,255,.1);padding:14px;color:#666;font-size:12px}
+  .cardfake .f{border:1px solid rgba(255,255,255,.12);padding:9px;margin-bottom:8px}
+  .place{margin-top:14px;background:var(--o5);text-align:center;font-family:Oswald,sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:19px;padding:14px;box-shadow:0 6px 18px rgba(249,115,22,.2)}
+  .state{font-size:11px;color:#888;margin:14px 0 6px;letter-spacing:.15em;text-transform:uppercase}
+  footer.mock{margin-top:30px;color:#888;font-size:12px;max-width:900px;line-height:1.6}
+</style>
+</head>
+<body>
+<h1 class="page">Mockup: holiday shop (WO 0001)</h1>
+<p class="note">Static mockup, not the app. Black and orange stays the brand; Christmas is accents only (deep red and pine green candy-stripe ribbon, a corner ribbon on the stands, gift copy, a light CSS snowfall that turns off with reduced-motion). No delivery dates or "arrives by" promises anywhere. Monthly-payment messaging for Affirm and Klarna comes from Stripe's own element, shown here as a dashed placeholder, never hand-written numbers. Each block is shown at desktop (1180px) and phone (390px).</p>
+
+<div id="root"></div>
+
+<footer class="mock">
+  Holiday look (banner, strip, ribbon, snow, red and green accents) is removed automatically on 2027-01-01 (Pacific). The $350 PLATOS#1 stand price and the checkout stay. The landing page gets only the slim strip; its SHOP NOW and ORDER NOW buttons are unchanged.
+</footer>
+
+<script>
+const IMG = "../public/assets/products/";
+const flakes = (n) => Array.from({length:n},(_,k)=>'<i style="left:'+((k*37+11)%100)+'%;animation-duration:'+(5+(k%5))+'s;animation-delay:-'+((k*1.3)%7).toFixed(1)+'s;width:'+(3+(k%3))+'px;height:'+(3+(k%3))+'px"></i>').join('');
+
+const strip = () => '<div class="strip"><span>Holiday gift deal: Sultan stands $350 with code <b>PLATOS#1</b></span><a href="#">Shop now</a></div><div class="hero-stub">(existing landing hero unchanged)</div>';
+
+const banner = () => '<div class="banner"><div class="snow">'+flakes(22)+'</div>'
+ + '<p class="kicker">The perfect gift</p>'
+ + '<h2>Give the gift of a <em>better swing</em></h2>'
+ + '<p>Sultan Softball and Sultan Baseball stands are <b>$350 each</b> with code <span class="code-chip">PLATOS#1</span>. Pay by card, or split it up with Affirm or Klarna.</p></div>';
+
+const standCard = (name, model, img, list) => '<div class="card stand"><div class="img"><img src="'+IMG+img+'" alt=""><span class="tag">Main Unit</span><span class="ribbon">$350 deal</span></div>'
+ + '<div class="body"><p class="model">'+model+'</p><h3>'+name+'</h3><p class="desc">Bungee-cord batting trainer. Full swing-through, game-like contact.</p>'
+ + '<div class="price-block"><p class="strike">'+list+'</p><p class="deal">$350 with code PLATOS#1</p><span class="btn">Add to Cart</span></div></div></div>';
+
+const extraCard = (name, model, img, price, inCart) => '<div class="card"><div class="img"><img src="'+IMG+img+'" alt=""></div>'
+ + '<div class="body"><p class="model">'+model+'</p><h3>'+name+'</h3><p class="desc">Replacement parts for your Sultan of Swing.</p>'
+ + '<div class="price-block"><p class="plain">'+price+'</p><span class="btn">Add to Cart</span>'+(inCart?'<span class="go">1 in cart. Go to checkout</span>':'')+'</div></div></div>';
+
+const questions = () => '<p class="questions">Questions? Call <b>(818) 371-9006</b> or email <span>sultan.of.swing.sales@gmail.com</span>.</p>';
+
+const shop = () => '<div class="pad">'+banner()+'<div style="height:22px"></div>'
+ + '<p class="kick">Official gear</p><h2 class="shop-h">Shop</h2><p class="sub">Browse our training equipment below</p>'+questions()
+ + '<p class="cat">Training Systems</p><div class="grid two" style="margin-bottom:22px">'
+ + standCard('Sultan of Swing — Softball','SB-1000','sultan-softball.jpeg','$495.00')
+ + standCard('Sultan of Swing — Baseball','BB-2000','sultan-baseball.jpeg','$489.50')
+ + '</div><p class="cat">Accessories &amp; Replacement Parts</p><div class="grid three">'
+ + extraCard('Portable Plate','PC-PLATE','portable-plate.jpeg','$45.00',true)
+ + extraCard('Softball Bungees &amp; Rope Cables Pack','SB-PK','softball-cable-pack.png','$48.50',false)
+ + extraCard('Baseball Complete Kit','BB','complete-bungee-pack.png','$50.00',false)
+ + '</div></div>';
+
+const cart = () => '<div class="cart"><h4>Your Cart</h4>'
+ + '<div class="line"><img src="'+IMG+'sultan-softball.jpeg" alt=""><div><p class="n">Sultan of Swing — Softball</p><p class="p"><s>$495.00</s>$350.00</p><div class="qty"><b>−</b>1<b>+</b><span style="margin-left:auto;color:#666">Remove</span></div></div></div>'
+ + '<div class="line"><img src="'+IMG+'portable-plate.jpeg" alt=""><div><p class="n">Portable Plate</p><p class="p"><s>$45.00</s>$40.50</p><div class="qty"><b>−</b>1<b>+</b><span style="margin-left:auto;color:#666">Remove</span></div></div></div>'
+ + '<div style="margin:14px 0"><label class="l">Promo Code</label><div class="input">PLATOS#1</div><p class="ok">PLATOS#1 applied: stands $350</p></div>'
+ + '<div class="tot"><div><span>Subtotal</span><span>$540.00</span></div><div class="g"><span>Discount</span><span>−$149.50</span></div><div><span>Shipping</span><span style="color:#fff">$111.60</span></div><div class="big"><span>TOTAL</span><span>$502.10</span></div></div></div>'
+ + '<div style="height:12px"></div><div class="cart" style="padding-top:14px"><label class="l">Promo Code (before a code is entered)</label><div class="input" style="border-color:rgba(255,255,255,.1);color:#666">Enter code</div><p class="hint">Have a code? Try PLATOS#1</p></div>';
+
+const methods = (sel) => {
+  const m = (k,t,s,pill) => '<div class="m '+(sel===k?'sel':'')+'"><span class="h"><span class="dot"></span>'+t+(pill?'<span class="pill">Flexible</span>':'')+'</span><span class="s">'+s+'</span></div>';
+  return '<div class="methods">'+m('card','Credit / Debit Card','Pay the full amount today.')+m('affirm','Pay Monthly with Affirm','Split your total into monthly payments.',true)+m('klarna','Pay with Klarna','Pay over time with Klarna.')+'</div>';
+};
+const panel = (sel) => sel==='card'
+ ? '<div class="cardfake"><div class="f">Card number</div><div class="f">MM / YY &nbsp;&nbsp;&nbsp; CVC</div><div class="f">Country</div>(Stripe card form renders here)</div>'
+ : '<div class="panel"><p class="t">How '+(sel==='affirm'?'Affirm':'Klarna')+' works</p><ol><li>No card details needed on this page.</li><li>Click <b>Place Order</b> below to continue to '+(sel==='affirm'?'Affirm':'Klarna')+'.</li><li>Choose the '+(sel==='affirm'?'payment plan':'payment option')+' that fits, then confirm to finish your order.</li></ol></div>';
+const payment = (sel) => '<div class="pad"><div class="flex-box"><p class="t">Flexible Payment Options</p><p>Pay in full today, or split your order into payments with Affirm or Klarna. You will see the available plans and the payment amounts from the provider before your order is final.</p><div class="msg">Provider monthly-payment messaging from Stripe renders here (Affirm and Klarna). No hand-written rates or amounts.</div></div>'
+ + methods(sel)+panel(sel)+'<div class="place">Place Order — $502.10</div></div>';
+
+const checkout = () => '<div class="pad"><p class="kick">Almost there</p><h2 class="co-h">Checkout</h2><p class="sub">Complete your purchase below</p><div class="co"><div><div class="state" style="margin-top:0">(contact + shipping fields unchanged)</div>'+payment('card').replace('<div class="pad">','<div>')+'</div><div>'+cart()+'</div></div></div>';
+
+function frame(label, cls, html){ return '<div><p class="col-label">'+label+'</p><div class="frame '+cls+'">'+html+'</div></div>'; }
+function block(title, fn){ return '<h3 class="section-title">'+title+'</h3><div class="row">'+frame('Desktop 1180px','desktop',fn())+frame('Phone 390px','phone',fn())+'</div>'; }
+
+document.getElementById('root').innerHTML =
+  block('1. Landing page: slim holiday strip (links to /order)', strip)
++ block('2. /order: holiday banner, stand cards with struck price, extras with plain price', shop)
++ block('3. Checkout: cart with PLATOS#1 applied, and the code box before a code is entered', checkout)
++ block('4. Payment options: Card selected', () => payment('card'))
++ block('5. Payment options: Affirm selected', () => payment('affirm'))
++ block('6. Payment options: Klarna selected', () => payment('klarna'));
+</script>
+</body>
+</html>

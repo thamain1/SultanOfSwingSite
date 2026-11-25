@@ -1,53 +1,20 @@
-interface Env {
+import { PROMO_CODE, isValidPromoCode, priceCart, validateItems } from "../../shared/pricing.ts";
+import { quoteShipping, type ShippingEnv } from "../_shared/shipping.ts";
+
+interface Env extends ShippingEnv {
   STRIPE_SECRET_KEY: string;
 }
 
-interface CartItem {
-  id: string;
-  qty: number;
+interface ShippingAddress {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
 }
 
-// Server-side product prices (cents) — source of truth
-const PRODUCTS: Record<string, { price: number; promoTier: "standard" | "pack" }> = {
-  "sb-1000": { price: 49500, promoTier: "standard" },
-  "bb-2000": { price: 48950, promoTier: "standard" },
-  "pc-plate": { price: 4500, promoTier: "standard" },
-  "sb-pk": { price: 4850, promoTier: "pack" },
-  "bb-pk": { price: 4250, promoTier: "pack" },
-  "bb-complete": { price: 5000, promoTier: "pack" },
-  "sb-complete": { price: 5350, promoTier: "pack" },
-};
-
-const PROMO_DISCOUNTS: Record<string, number> = {
-  standard: 0.10, // 10% off
-  pack: 0.20,     // 20% off
-};
-
-const VALID_PROMO_CODES = new Set(["PLATOS#1"]);
-
-// USPS Flat Rate (cents)
-const USPS_MEDIUM_FLAT = 1610;
-
-const LARGE_IDS = new Set(["sb-1000", "bb-2000"]);
-
-// Maximum acceptable shipping cost (cents) — sanity check ceiling
-const MAX_SHIPPING = 25000; // $250
-
-function calculateFallbackShipping(items: CartItem[]): number {
-  const hasLarge = items.some((i) => LARGE_IDS.has(i.id));
-  const hasSmall = items.some((i) => !LARGE_IDS.has(i.id));
-
-  let shipping = 0;
-
-  if (hasLarge) {
-    shipping += 15000; // $150 — conservative East Coast fallback for FedEx Home Delivery
-  }
-
-  if (hasSmall) {
-    shipping += USPS_MEDIUM_FLAT;
-  }
-
-  return shipping;
+function isNonEmptyString(v: unknown): v is string {
+  return typeof v === "string" && v.trim().length > 0;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -58,70 +25,65 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   try {
+    // Everything in the body is untrusted. Only item ids, quantities, the promo
+    // code, the destination and the shipping amount the shopper SAW are read;
+    // any price, amount or total the client sends is ignored.
     const body = await context.request.json() as {
-      items: CartItem[];
-      shipping: { name: string; address: string; city: string; state: string; zip: string };
-      email: string;
-      phone?: string;
-      promoCode?: string;
-      paymentMethod?: "card" | "affirm";
-      shippingTotal?: number;
+      items?: unknown;
+      shipping?: Partial<ShippingAddress>;
+      email?: unknown;
+      phone?: unknown;
+      promoCode?: unknown;
+      paymentMethod?: "card" | "affirm" | "klarna";
+      shippingTotal?: unknown;
     };
 
-    const { items, shipping, email, phone, promoCode, paymentMethod = "card", shippingTotal } = body;
+    const { shipping, email, phone, promoCode, shippingTotal } = body;
 
-    if (!items || items.length === 0) {
-      return Response.json({ error: "Cart is empty" }, { status: 400 });
+    const valid = validateItems(body.items);
+    if (!valid.ok) {
+      return Response.json({ error: valid.error }, { status: 400 });
+    }
+    const items = valid.items;
+
+    if (
+      !shipping ||
+      !isNonEmptyString(shipping.name) ||
+      !isNonEmptyString(shipping.address) ||
+      !isNonEmptyString(shipping.city) ||
+      !isNonEmptyString(shipping.state) ||
+      !isNonEmptyString(shipping.zip) ||
+      !isNonEmptyString(email)
+    ) {
+      return Response.json({ error: "Missing contact or shipping details" }, { status: 400 });
     }
 
-    // Calculate totals server-side (never trust client)
-    let subtotal = 0;
-    for (const item of items) {
-      const product = PRODUCTS[item.id];
-      if (!product) {
-        return Response.json({ error: `Unknown product: ${item.id}` }, { status: 400 });
-      }
-      subtotal += product.price * item.qty;
+    // Shipping is computed here from items + destination (same function as the
+    // quote the shopper sees). The client's number is only a check: if it is not
+    // exactly what the server computed, return 409 with the server's number and
+    // charge nothing, so the shopper is never charged a total they did not see.
+    const quote = await quoteShipping(context.env, items, { zip: shipping.zip, state: shipping.state });
+    const shippingCost = quote.total;
+    if (shippingTotal !== shippingCost) {
+      return Response.json(
+        { error: "Shipping changed. Please review your total and try again.", shipping: shippingCost },
+        { status: 409 },
+      );
     }
 
-    // Apply tiered promo discount (10% standard, 20% packs)
-    let discount = 0;
-    if (promoCode && VALID_PROMO_CODES.has(promoCode.toUpperCase())) {
-      for (const item of items) {
-        const product = PRODUCTS[item.id];
-        if (product) {
-          const rate = PROMO_DISCOUNTS[product.promoTier];
-          discount += Math.round(product.price * item.qty * rate);
-        }
-      }
-    }
-
-    // Use client-provided shipping if valid, otherwise fall back
-    const fallback = calculateFallbackShipping(items);
-    let shippingCost: number;
-
-    if (typeof shippingTotal === "number" && shippingTotal > 0 && shippingTotal <= MAX_SHIPPING) {
-      shippingCost = shippingTotal;
-    } else {
-      shippingCost = fallback;
-    }
-
-    const total = subtotal - discount + shippingCost;
+    const { subtotal, discount, total } = priceCart(items, promoCode, shippingCost);
 
     if (total < 50) {
       return Response.json({ error: "Order total too low" }, { status: 400 });
-    }
-
-    // Build payment method types
-    const paymentMethodTypes: string[] = ["card"];
-    if (paymentMethod === "affirm") {
-      paymentMethodTypes.push("affirm");
     }
 
     // Build line item description
     const description = items
       .map((i) => `${i.qty}x ${i.id}`)
       .join(", ");
+
+    // Record the code only when it was actually applied.
+    const promoUsed = isValidPromoCode(promoCode) ? PROMO_CODE : "";
 
     // Create PaymentIntent via Stripe REST API
     const params = new URLSearchParams();
@@ -137,11 +99,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     params.append("shipping[address][country]", "US");
     params.append("automatic_payment_methods[enabled]", "true");
     params.append("metadata[items]", JSON.stringify(items));
-    params.append("metadata[promoCode]", promoCode || "");
+    params.append("metadata[promoCode]", promoUsed);
     params.append("metadata[subtotal]", subtotal.toString());
     params.append("metadata[discount]", discount.toString());
     params.append("metadata[shipping]", shippingCost.toString());
-    // Shipping address persisted to metadata — survives any Stripe Elements
+    // Shipping address persisted to metadata: survives any Stripe Elements
     // re-confirm that might clear the top-level `shipping` field.
     params.append("metadata[ship_name]",    shipping.name);
     params.append("metadata[ship_line1]",   shipping.address);
@@ -150,7 +112,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     params.append("metadata[ship_zip]",     shipping.zip);
     params.append("metadata[ship_country]", "US");
     params.append("metadata[ship_email]",   email);
-    if (phone) params.append("metadata[ship_phone]", phone);
+    if (isNonEmptyString(phone)) params.append("metadata[ship_phone]", phone);
 
     const stripeRes = await fetch("https://api.stripe.com/v1/payment_intents", {
       method: "POST",

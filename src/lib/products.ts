@@ -1,3 +1,4 @@
+// Catalog only. Prices, promo tiers and shipping class live in shared/pricing.ts.
 export interface Product {
   id: string;
   model: string;
@@ -5,8 +6,6 @@ export interface Product {
   description: string;
   image: string;
   category: "main" | "accessory";
-  shippingType: "fedex" | "usps";
-  promoTier: "standard" | "pack"; // standard = 10%, pack = 20%
 }
 
 export const PRODUCTS: Product[] = [
@@ -17,8 +16,6 @@ export const PRODUCTS: Product[] = [
     description: "Bungee-cord batting trainer designed for softball. Full swing-through, game-like contact.",
     image: "/assets/products/sultan-softball.jpeg",
     category: "main",
-    shippingType: "fedex",
-    promoTier: "standard",
   },
   {
     id: "bb-2000",
@@ -27,8 +24,6 @@ export const PRODUCTS: Product[] = [
     description: "Bungee-cord batting trainer designed for baseball. Build timing and barrel control.",
     image: "/assets/products/sultan-baseball.jpeg",
     category: "main",
-    shippingType: "fedex",
-    promoTier: "standard",
   },
   {
     id: "pc-plate",
@@ -37,8 +32,6 @@ export const PRODUCTS: Product[] = [
     description: "Lightweight, portable home plate. Folds flat for easy transport.",
     image: "/assets/products/portable-plate.jpeg",
     category: "accessory",
-    shippingType: "usps",
-    promoTier: "standard",
   },
   {
     id: "sb-pk",
@@ -47,8 +40,6 @@ export const PRODUCTS: Product[] = [
     description: "Replacement softball, bungees, and rope cables for Sultan of Swing Softball.",
     image: "/assets/products/softball-cable-pack.png",
     category: "accessory",
-    shippingType: "usps",
-    promoTier: "pack",
   },
   {
     id: "bb-pk",
@@ -57,8 +48,6 @@ export const PRODUCTS: Product[] = [
     description: "Replacement baseball, bungees, and rope cables for Sultan of Swing Baseball.",
     image: "/assets/products/baseball-cable-pack.jpeg",
     category: "accessory",
-    shippingType: "usps",
-    promoTier: "pack",
   },
   {
     id: "bb-complete",
@@ -67,8 +56,6 @@ export const PRODUCTS: Product[] = [
     description: "Complete replacement kit — baseball, bungee, rope, cables, and connectors.",
     image: "/assets/products/complete-bungee-pack.png",
     category: "accessory",
-    shippingType: "usps",
-    promoTier: "pack",
   },
   {
     id: "sb-complete",
@@ -77,7 +64,5 @@ export const PRODUCTS: Product[] = [
     description: "Complete replacement kit — softball, bungee, rope, cables, and connectors.",
     image: "/assets/products/complete-bungee-pack.png",
     category: "accessory",
-    shippingType: "usps",
-    promoTier: "pack",
   },
 ];

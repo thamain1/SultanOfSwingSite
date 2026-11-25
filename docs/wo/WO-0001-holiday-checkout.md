@@ -1,6 +1,6 @@
 # WO 0001: Holiday checkout: $350 stands with PLATOS#1, Affirm + Klarna, Christmas shop
 
-**Status:** READY (Gate approved by Jesse 2026-11-25)
+**Status:** IN PROGRESS (Gate approved by Jesse 2026-11-25)
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0001 (wo-0001-holiday-checkout, from main d603db5)
 **Risk:** high (customer harm if it breaks: a customer is charged the wrong amount, or a shopper can pay less than the price by editing the request; live Stripe money)
 **Executor:** update Status on start/finish; fill in the Close-out block.
@@ -67,6 +67,7 @@ that advertises the deal. Today the site is "call or email for pricing" with the
 5. Holiday switch: unit case in check-pricing (or a second script) showing the holiday flag is true for 2026-12-24 and false for 2027-01-01T08:00Z.
 6. **UI preservation:** BEFORE (main) and AFTER (branch) screenshots via `npm run build && npm run preview` (Playwright MCP), 390px and 1280px: `/`, `/order` (empty cart), `/order` with SB-1000 + plate in cart and PLATOS#1 applied, checkout payment step with each of Card / Affirm / Klarna selected (Elements render only; do not enter details), `/order/confirmation?redirect_status=succeeded`. Element inventory table: every visible element on `/` and `/order` before -> where it is after. Only the call/email buttons may change (Jesse's decision), and they survive as the contact line. Also one AFTER screenshot with `prefers-reduced-motion: reduce` (no snow animation).
 7. **Mockup stop (house rule 8):** before wiring the holiday visuals into the app, build a static mockup (`mockups/holiday-shop.html`, desktop + 390px: banner, stand card with struck price, cart with code applied, payment options with Affirm/Klarna) and **stop (Status BLOCKED: awaiting Jesse's look)**. Pricing/server/checkout re-enable work may be done before the stop. App must match the approved mockup.
+   **Mockup approved by Jesse 2026-11-25 ("Mock-up looks good. Roll with it."), relayed by the planning session. The stop is lifted; mockup is `mockups/holiday-shop.html`; the app must match it.**
 8. Review: fresh-context reviewer at high effort (Claude `code-reviewer`; Codex as second reviewer preferred), up to 3 rounds; no open blocking/should-fix.
 9. **After Jesse's push go only (planner runs, not the executor):** push the branch for a CF preview; on the preview create one intent per method (card / affirm / klarna) with the stand + code and confirm in the response that amount = 35000 + shipping and that Affirm and Klarna options render. Then merge to main on Jesse's go, and verify live on content: `?cb=<sha>` root HTML -> bundle name -> grep bundle for "PLATOS#1" and for 0 "for Pricing".
 Exit: items 1-8 pass, Status IN REVIEW -> DONE. Stop: same failure after 2 fix attempts, anything outside scope, any need to push/deploy, or the mockup stop.

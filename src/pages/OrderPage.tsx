@@ -1,18 +1,20 @@
 import { Link } from "react-router-dom";
-import { PRODUCTS } from "../lib/products";
-import { SALES_PHONE, SALES_EMAIL, pricingMailto } from "../lib/contact";
+import { PRODUCTS, type Product } from "../lib/products";
+import { SALES_PHONE, SALES_EMAIL, contactMailto } from "../lib/contact";
+import { useCart } from "../lib/cart";
+import { PRICE_TABLE, PROMO_CODE, STAND_PROMO_PRICE, formatDollars, formatPrice } from "../lib/pricing";
+import { CheckoutSection } from "../checkout/Checkout";
 import Footer from "../components/Footer";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
-// Online ordering is off: pricing and orders are by phone or email only. The full
-// cart + Stripe checkout is kept, unimported, in src/checkout/Checkout.tsx.
-
 /* ─── Product Card ─── */
-function ProductCard({ name, model, image, description, category }: {
-  name: string; model: string;
-  image: string; description: string; category: string;
-}) {
+function ProductCard({ id, name, model, image, description, category }: Product) {
+  const { addItem, items } = useCart();
+  const price = PRICE_TABLE[id];
+  const inCart = items.find((i) => i.product.id === id)?.qty ?? 0;
+  const hasPromoPrice = price.promoPrice !== undefined;
+
   return (
     <div className="border border-white/10 bg-zinc-950 hover:border-orange-500/50 transition-all group flex flex-col">
       <div className="relative overflow-hidden bg-white">
@@ -27,21 +29,30 @@ function ProductCard({ name, model, image, description, category }: {
         <p className="text-gray-500 text-[10px] tracking-widest uppercase">{model}</p>
         <h3 style={oswald} className="text-white font-bold tracking-wide mt-1 text-lg leading-tight">{name}</h3>
         <p className="text-gray-400 text-xs mt-2 leading-relaxed flex-1">{description}</p>
-        <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-1 gap-2">
-          <a
-            href={`tel:${SALES_PHONE.tel}`}
+        <div className="mt-4 pt-4 border-t border-white/10">
+          {hasPromoPrice ? (
+            <div className="mb-3">
+              <p style={oswald} className="text-gray-500 text-lg tracking-wide line-through">{formatPrice(price.price)}</p>
+              <p style={oswald} className="text-orange-500 text-sm font-bold tracking-widest uppercase">
+                {formatDollars(STAND_PROMO_PRICE)} with code {PROMO_CODE}
+              </p>
+            </div>
+          ) : (
+            <p style={oswald} className="text-white text-lg tracking-wide mb-3">{formatPrice(price.price)}</p>
+          )}
+          <button
+            type="button"
+            onClick={() => addItem(id)}
             style={oswald}
-            className="block text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 bg-orange-500 hover:bg-orange-600 hover:border-orange-600 text-white"
+            className="block w-full text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 bg-orange-500 hover:bg-orange-600 hover:border-orange-600 text-white"
           >
-            Call for Pricing
-          </a>
-          <a
-            href={pricingMailto(name)}
-            style={oswald}
-            className="block text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 text-orange-500 hover:bg-orange-500/10"
-          >
-            Email for Pricing
-          </a>
+            Add to Cart
+          </button>
+          {inCart > 0 && (
+            <a href="#checkout" className="block text-center text-xs text-orange-500 hover:text-orange-400 mt-2 tracking-widest">
+              {inCart} in cart. Go to checkout
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -70,23 +81,18 @@ export default function OrderPage() {
           <h1 style={oswald} className="text-4xl font-bold uppercase mb-2">SHOP</h1>
           <p className="text-gray-500 text-sm mb-6 tracking-widest">Browse our training equipment below</p>
 
-          {/* Call for pricing */}
-          <div className="border border-orange-500/40 border-l-2 border-l-orange-500 bg-gradient-to-r from-orange-500/10 to-transparent p-5 mb-10 max-w-2xl">
-            <p style={oswald} className="text-white text-sm font-bold uppercase tracking-[0.2em] mb-2">
-              Call or Email for Pricing
-            </p>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              For pricing and to place an order, give us a call at{" "}
-              <a href={`tel:${SALES_PHONE.tel}`} style={oswald} className="text-orange-500 hover:text-orange-400 tracking-widest whitespace-nowrap">
-                {SALES_PHONE.display}
-              </a>{" "}
-              or email{" "}
-              <a href={pricingMailto()} className="text-orange-500 hover:text-orange-400 break-words">
-                {SALES_EMAIL}
-              </a>
-              .
-            </p>
-          </div>
+          {/* Questions */}
+          <p className="text-gray-400 text-xs leading-relaxed mb-10 max-w-2xl">
+            Questions? Call{" "}
+            <a href={`tel:${SALES_PHONE.tel}`} style={oswald} className="text-orange-500 hover:text-orange-400 tracking-widest whitespace-nowrap">
+              {SALES_PHONE.display}
+            </a>{" "}
+            or email{" "}
+            <a href={contactMailto()} className="text-orange-500 hover:text-orange-400 break-words">
+              {SALES_EMAIL}
+            </a>
+            .
+          </p>
 
           {/* Main units */}
           <h3 style={oswald} className="text-sm text-gray-400 tracking-widest uppercase mb-4 border-b border-white/10 pb-2">
@@ -100,7 +106,7 @@ export default function OrderPage() {
 
           {/* Accessories */}
           <h3 style={oswald} className="text-sm text-gray-400 tracking-widest uppercase mb-4 border-b border-white/10 pb-2">
-            Accessories & Replacement Parts
+            Accessories &amp; Replacement Parts
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {PRODUCTS.filter((p) => p.category === "accessory").map((p) => (
@@ -108,6 +114,9 @@ export default function OrderPage() {
             ))}
           </div>
         </div>
+
+        {/* ── CHECKOUT (renders once the cart has items) ── */}
+        <CheckoutSection />
       </div>
 
       <Footer />

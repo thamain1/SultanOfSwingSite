@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Footer from "../components/Footer";
+import { useCart } from "../lib/cart";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -9,6 +11,12 @@ export default function OrderConfirmation() {
   const status = params.get("redirect_status");
 
   const isSuccess = status === "succeeded";
+
+  // Empty the cart once the order is confirmed.
+  const { clearCart } = useCart();
+  useEffect(() => {
+    if (isSuccess) clearCart();
+  }, [isSuccess, clearCart]);
 
   return (
     <div className="bg-black min-h-screen">
