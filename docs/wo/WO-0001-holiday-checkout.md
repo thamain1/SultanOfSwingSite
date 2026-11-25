@@ -1,6 +1,6 @@
 # WO 0001: Holiday checkout: $350 stands with PLATOS#1, Affirm + Klarna, Christmas shop
 
-**Status:** DRAFT (high risk: Jesse approves the Gate, then flips to READY)
+**Status:** READY (Gate approved by Jesse 2026-11-25)
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0001 (wo-0001-holiday-checkout, from main d603db5)
 **Risk:** high (customer harm if it breaks: a customer is charged the wrong amount, or a shopper can pay less than the price by editing the request; live Stripe money)
 **Executor:** update Status on start/finish; fill in the Close-out block.
