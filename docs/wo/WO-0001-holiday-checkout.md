@@ -76,6 +76,12 @@ Exit: items 1-8 pass, Status IN REVIEW -> DONE. Stop: same failure after 2 fix a
 ## Push go
 - Jesse 2026-11-25: once all tests and review pass, push the BRANCH for a CF preview; Jesse reviews the preview. Merge to main (= production) waits for Jesse's separate go after that review.
 
+## Preview check (step 9), 2026-11-25, branch pushed at 24ada0f
+- Preview: https://wo-0001-holiday-checkout.sultanofswingsite.pages.dev (CF check-run "Deploy successful"). Served bundle index-BLBXvSO2.js = local build; PLATOS#1 x1, "for Pricing" x0.
+- Shipping on preview: 1 stand NY = 15000 "Estimated rate (1 box)", 2 stands = 30000 "(2 boxes)", stand+plate = 15000+1610, 10001+CA -> 400 "ZIP does not match state", BB-2000 CA = 8000. All are ZONE FALLBACK: the Preview environment has no FedEx credentials (production returns "Real-time rate" 16792 for 1 stand NY).
+- Payments on preview: create-payment-intent -> 500 "Payment service not configured" (no STRIPE_SECRET_KEY in Preview env) and the bundle has no publishable key (no pk_live, no pk_test), so Elements cannot render. Card/Affirm/Klarna and groupPackageCount against live FedEx are NOT yet verified.
+- Needed from Jesse: Preview env vars in CF Pages (Stripe TEST keys: VITE_STRIPE_PUBLISHABLE_KEY=pk_test, STRIPE_SECRET_KEY=sk_test; FedEx creds same as prod), then redeploy the preview.
+
 ## Open (not blocking the build)
 - Rick: Christmas ship-by date (then a WO may add "order by" copy), rush shipping option.
 - Jesse: confirm in Stripe Dashboard that `STRIPE_WEBHOOK_SECRET` is set in CF Pages env (the webhook skips signature checks when it is unset) and that the order-email recipient in `webhook.ts` is still right.
