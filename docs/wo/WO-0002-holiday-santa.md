@@ -1,6 +1,6 @@
 # WO 0002: Front-page holiday Santa + hero snowfall
 
-**Status:** READY
+**Status:** BLOCKED (awaiting Jesse's look at the mockup, gate item 1)
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0002 (wo-0002-holiday-santa, from main 7b8e163 + WO-0001 doc commits)
 **Risk:** low (customer harm if it breaks: the home page looks wrong or a decoration covers a button; no money, no data)
 **Executor:** update Status on start/finish; fill in the Close-out block.
@@ -56,5 +56,5 @@ Exit: all pass -> DONE. Stop: same failure after 2 fix attempts, anything out of
 - **Review:**
 - **Decisions I'm NOT confident about:**
 - **Proposed learned rules:**
-- **Blockers:**
+- **Blockers:** Mockup stop (gate 1). `mockups/holiday-santa.html` built; screenshots in `C:\Dev\.playwright-mcp\wo0002\` (mockup-1280-*, mockup-390-*, mockup-poses.png). BEFORE screenshots of `/` (gate 3) taken: before-390-*/before-1280-* + inventory-BEFORE.json (189 elements each width). App code not touched yet. Open design question for Jesse: phone Santa placement/size (see close-out note).
 - **Next action:**

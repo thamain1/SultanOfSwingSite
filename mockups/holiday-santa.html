@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup: Holiday Santa + hero snow (WO 0002)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#222;color:#fff;font-family:Inter,sans-serif;padding:24px}
+h1.page{font-family:Oswald,sans-serif;font-size:26px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+p.note{color:#aaa;font-size:13px;max-width:980px;line-height:1.55;margin-bottom:6px}
+.sec{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.2em;color:#fb923c;margin:30px 0 12px;font-size:15px;border-bottom:1px solid #444;padding-bottom:6px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;position:sticky;top:0;z-index:50;background:#222;padding:8px 0}
+.controls button{font-family:Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;background:#3f3f46;color:#fff;border:1px solid #555;padding:7px 12px;cursor:pointer}
+.controls button.on{background:#f97316;color:#000;border-color:#f97316}
+.row{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.lab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:6px}
+iframe{border:1px solid #444;background:#000;display:block}
+.poses{display:flex;gap:10px;flex-wrap:wrap}
+.pose{background:#000;border:1px solid #444;padding:6px 10px 8px;text-align:center;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#888}
+.pose .santa-link{position:relative;top:auto;right:auto;display:block;height:200px;margin:0 auto 4px}
+.pose .santa-tag{display:none}
+.pose.rm-on{outline:2px solid #f97316}
+.freeze .santa-anim{animation-play-state:paused!important;animation-delay:var(--t)!important}
+
+.santa-svg{display:block;height:100%;width:100%;overflow:visible}
+
+
+.santa-tag{position:absolute;bottom:100%;right:6px;margin-bottom:6px;white-space:nowrap;line-height:1;font-family:Oswald,sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:#f97316;color:#000;padding:6px 10px;opacity:0;transform:translateY(4px);transition:opacity .18s,transform .18s;pointer-events:none}
+.santa-tag:after{content:"";position:absolute;top:100%;right:18px;border:5px solid transparent;border-top-color:#f97316}
+.santa-link:hover .santa-tag,.santa-link:focus-visible .santa-tag{opacity:1;transform:none}
+@media (max-width:767px){.santa-tag{bottom:auto;right:100%;top:22%;margin:0 8px 0 0}.santa-tag:after{top:50%;right:-10px;margin-top:-5px;border-color:transparent;border-left-color:#f97316}}
+.santa-lean{transform-box:view-box;transform-origin:78px 188px;animation:santa-lean 4s ease-in-out infinite}
+.santa-arm{transform-box:view-box;transform-origin:106px 106px;animation:santa-arm 4s ease-in-out infinite}
+.santa-bat{transform:translate(138px,116px) rotate(-14deg);transform-box:view-box;transform-origin:0 0;animation:santa-bat 4s linear infinite}
+.santa-swoosh{animation:santa-swoosh 4s linear infinite}
+.santa-pom{transform-box:view-box;transform-origin:62px 17px;animation:santa-pom 4s ease-in-out infinite}
+.santa-ball{opacity:0;animation:santa-ball 4s linear infinite}
+.santa-burst{opacity:0;transform-box:view-box;transform-origin:214px 114px;animation:santa-burst 4s linear infinite}
+@keyframes santa-lean{0%,100%{transform:rotate(0)}10%{transform:rotate(-2.5deg)}20%{transform:rotate(3deg)}30%{transform:rotate(4deg)}44%{transform:rotate(0)}}
+@keyframes santa-arm{0%,100%{transform:rotate(0)}8%{transform:rotate(-7deg)}20%{transform:rotate(9deg)}30%{transform:rotate(14deg)}44%{transform:rotate(0)}}
+@keyframes santa-bat{
+  0%{transform:translate(138px,116px) rotate(-14deg);animation-timing-function:ease-out}
+  7%{transform:translate(138px,116px) rotate(-23deg);animation-timing-function:ease-in-out}
+  11%{transform:translate(138px,116px) rotate(-25deg);animation-timing-function:cubic-bezier(.55,.05,.9,.55)}
+  20%{transform:translate(138px,116px) rotate(92deg);animation-timing-function:cubic-bezier(.1,.6,.3,1)}
+  30%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}
+  33%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}
+  45%,100%{transform:translate(138px,116px) rotate(-14deg)}}
+@keyframes santa-swoosh{0%,13%{opacity:0}16%{opacity:.55}21%{opacity:.5}28%,100%{opacity:0}}
+@keyframes santa-pom{0%,100%{transform:rotate(0)}12%{transform:rotate(7deg)}22%{transform:rotate(-14deg)}34%{transform:rotate(9deg)}46%{transform:rotate(-4deg)}56%{transform:rotate(0)}}
+@keyframes santa-ball{
+  0%,3%{opacity:0;transform:translate(0,-84px);animation-timing-function:cubic-bezier(.45,0,.85,.55)}
+  5%{opacity:1;transform:translate(0,-80px)}
+  19.6%{opacity:1;transform:translate(0,0);animation-timing-function:cubic-bezier(.1,.6,.3,1)}
+  20%{opacity:1;transform:translate(0,0) scale(1)}
+  34%{opacity:0;transform:translate(150px,-56px) scale(.5)}
+  100%{opacity:0;transform:translate(150px,-56px) scale(.5)}}
+@keyframes santa-burst{0%,19.5%{opacity:0;transform:scale(.2)}20%{opacity:1;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}31%,100%{opacity:0;transform:scale(1.3)}}
+@media (prefers-reduced-motion:reduce){
+  .santa-anim{animation:none!important}
+  .santa-bat{transform:translate(138px,116px) rotate(74deg)}
+  .santa-arm{transform:rotate(6deg)}
+  .santa-ball{opacity:1;transform:none}
+  .santa-burst,.santa-swoosh{opacity:0}
+}
+
+ul.q{color:#bbb;font-size:13px;line-height:1.6;margin:6px 0 0 20px;max-width:980px}
+</style></head><body>
+<h1 class="page">Mockup: Holiday Santa + hero snow</h1>
+<p class="note">WO 0002 (mockup stop). Two live frames below are replicas of the current home-page hero (same Tailwind classes, same photo and logo) with the two NEW pieces added: light snowfall (above the photo, below the text) and a small original SVG Santa who swings an orange bat, hits a ball, and links to /order. Everything else is exactly where it is today. Holiday-only: both pieces render only while the holiday look is active (ends 2027-01-01 Pacific).</p>
+<p class="note">Santa size/placement: desktop (1024+) bottom-right corner, about 180px tall; tablet (768-1023) bottom-right, about 112px; phone (under 768) the bottom-right corner is full (buttons and badges run edge to edge), so Santa sits top-right of the hero just under the holiday strip, about 78px tall. Hover or focus him to see the "Shop the $350 deal" tag.</p>
+<div class="controls" id="ctl">
+  <button data-pose="play" class="on">Play (live)</button>
+  <button data-pose="0.36">Pose: wind-up</button>
+  <button data-pose="0.8">Pose: contact</button>
+  <button data-pose="1.0">Pose: hit</button>
+  <button data-pose="1.2">Pose: follow-through</button>
+  <button data-rm="1">Reduced-motion variant: OFF</button>
+</div>
+<div class="sec">Desktop 1280 (live frame)</div>
+<div class="lab">1280 x full hero</div>
+<iframe id="fd" width="1280" height="995" title="desktop"></iframe>
+<div class="sec">Phone 390 (live frame)</div>
+<div class="lab">390 x full hero</div>
+<iframe id="fp" width="390" height="944" title="phone"></iframe>
+<div class="sec">Santa close-up (the five poses of one swing, then the reduced-motion pose)</div>
+<div class="poses">
+  <div class="pose freeze" style="--t:-3s"><span class="santa-link"><svg class="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
+  <defs><clipPath id="sbc-rest"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
+  <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>
+  <g class="santa-lean santa-anim">
+    <!-- legs + boots -->
+    <rect x="52" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="88" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="42" y="181" width="32" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="84" y="181" width="34" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="42" y="172" width="32" height="15" rx="7.5" fill="#18181b"/>
+    <rect x="84" y="172" width="34" height="15" rx="7.5" fill="#18181b"/>
+    <!-- coat -->
+    <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c"/>
+    <g clip-path="url(#sbc-rest)">
+      <ellipse cx="104" cy="140" rx="30" ry="46" fill="#991b1b"/>
+      <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c" transform="translate(-9 -2)"/>
+      <rect x="73" y="86" width="10" height="84" rx="5" fill="#f5f5f4"/>
+      <rect x="30" y="121" width="96" height="15" fill="#18181b"/>
+      <rect x="30" y="152" width="96" height="18" fill="#f5f5f4"/>
+    </g>
+    <rect x="65" y="118" width="26" height="22" rx="4" fill="#f97316"/>
+    <rect x="71" y="123.5" width="14" height="11" rx="2" fill="#18181b"/>
+    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->
+    <g class="santa-arm santa-anim">
+      <path d="M106 106 L134 117" stroke="#b91c1c" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M124 113 L130 115.5" stroke="#f5f5f4" stroke-width="20" stroke-linecap="round" fill="none"/>
+      <g class="santa-bat santa-anim">
+        <g class="santa-swoosh santa-anim" opacity="0"><path d="M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z" fill="#fff" fill-opacity="0.5"/><path d="M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z" fill="#fff" fill-opacity="0.28"/><path d="M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z" fill="#fff" fill-opacity="0.12"/></g>
+        <rect x="-3" y="-26" width="6" height="38" rx="2.5" fill="#18181b"/>
+        <circle cx="0" cy="13" r="5" fill="#ea580c"/>
+        <path d="M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z" fill="#f97316"/>
+        <path d="M-4.4 -78 Q-4.8 -60 -3.6 -44" stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71" stroke="#fff7ed" stroke-width="2.2" fill="none"/>
+      </g>
+      <circle cx="145" cy="112" r="8" fill="#111113"/>
+      <circle cx="139" cy="120" r="8.5" fill="#18181b"/>
+      <path d="M134 116 q5 -2 9 2" stroke="#3f3f46" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    </g>
+    <!-- head -->
+    <ellipse cx="78" cy="68" rx="26" ry="23" fill="#fcd5b0"/>
+    <path d="M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z" fill="#f5f5f4"/>
+    <path d="M49 71 C44 104 60 120 78 120" stroke="#e4e4e7" stroke-width="3" stroke-linecap="round" fill="none" opacity=".0"/>
+    <path d="M70 90 Q78 99.5 86 90 Z" fill="#7f1d1d"/>
+    <ellipse cx="64" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(-12 64 83)"/>
+    <ellipse cx="92" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(12 92 83)"/>
+    <circle cx="78" cy="79" r="6.2" fill="#f4978e"/>
+    <circle cx="76.2" cy="77" r="1.8" fill="#fff" opacity=".7"/>
+    <circle cx="57.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <circle cx="98.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <ellipse cx="68" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <ellipse cx="89" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <circle cx="69" cy="67.8" r="1.1" fill="#fff"/>
+    <circle cx="90" cy="67.8" r="1.1" fill="#fff"/>
+    <path d="M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5" stroke="#fafafa" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+    <!-- hat -->
+    <path d="M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z" fill="#b91c1c"/>
+    <path d="M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z" fill="#991b1b" opacity=".0"/>
+    <g class="santa-pom santa-anim">
+      <path d="M62 17 C46 8 28 17 28 38" stroke="#b91c1c" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="28" cy="42" r="9" fill="#fafafa"/>
+    </g>
+    <rect x="46" y="41" width="64" height="20" rx="10" fill="#f5f5f4"/>
+    <rect x="46" y="56" width="64" height="5" rx="2.5" fill="#f97316"/>
+  </g>
+  <!-- ball + impact (outside the lean group so they stay put) -->
+  <g class="santa-ball santa-anim">
+    <circle cx="211" cy="116" r="8" fill="#fafafa"/>
+    <path d="M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122" stroke="#b91c1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="santa-burst santa-anim">
+    <polygon points="214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6" fill="#fde047"/>
+    <polygon points="214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4" fill="#fff"/>
+  </g>
+</svg></span>rest</div>
+  <div class="pose freeze" style="--t:-0.36s"><span class="santa-link"><svg class="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
+  <defs><clipPath id="sbc-wind-up"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
+  <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>
+  <g class="santa-lean santa-anim">
+    <!-- legs + boots -->
+    <rect x="52" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="88" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="42" y="181" width="32" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="84" y="181" width="34" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="42" y="172" width="32" height="15" rx="7.5" fill="#18181b"/>
+    <rect x="84" y="172" width="34" height="15" rx="7.5" fill="#18181b"/>
+    <!-- coat -->
+    <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c"/>
+    <g clip-path="url(#sbc-wind-up)">
+      <ellipse cx="104" cy="140" rx="30" ry="46" fill="#991b1b"/>
+      <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c" transform="translate(-9 -2)"/>
+      <rect x="73" y="86" width="10" height="84" rx="5" fill="#f5f5f4"/>
+      <rect x="30" y="121" width="96" height="15" fill="#18181b"/>
+      <rect x="30" y="152" width="96" height="18" fill="#f5f5f4"/>
+    </g>
+    <rect x="65" y="118" width="26" height="22" rx="4" fill="#f97316"/>
+    <rect x="71" y="123.5" width="14" height="11" rx="2" fill="#18181b"/>
+    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->
+    <g class="santa-arm santa-anim">
+      <path d="M106 106 L134 117" stroke="#b91c1c" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M124 113 L130 115.5" stroke="#f5f5f4" stroke-width="20" stroke-linecap="round" fill="none"/>
+      <g class="santa-bat santa-anim">
+        <g class="santa-swoosh santa-anim" opacity="0"><path d="M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z" fill="#fff" fill-opacity="0.5"/><path d="M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z" fill="#fff" fill-opacity="0.28"/><path d="M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z" fill="#fff" fill-opacity="0.12"/></g>
+        <rect x="-3" y="-26" width="6" height="38" rx="2.5" fill="#18181b"/>
+        <circle cx="0" cy="13" r="5" fill="#ea580c"/>
+        <path d="M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z" fill="#f97316"/>
+        <path d="M-4.4 -78 Q-4.8 -60 -3.6 -44" stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71" stroke="#fff7ed" stroke-width="2.2" fill="none"/>
+      </g>
+      <circle cx="145" cy="112" r="8" fill="#111113"/>
+      <circle cx="139" cy="120" r="8.5" fill="#18181b"/>
+      <path d="M134 116 q5 -2 9 2" stroke="#3f3f46" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    </g>
+    <!-- head -->
+    <ellipse cx="78" cy="68" rx="26" ry="23" fill="#fcd5b0"/>
+    <path d="M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z" fill="#f5f5f4"/>
+    <path d="M49 71 C44 104 60 120 78 120" stroke="#e4e4e7" stroke-width="3" stroke-linecap="round" fill="none" opacity=".0"/>
+    <path d="M70 90 Q78 99.5 86 90 Z" fill="#7f1d1d"/>
+    <ellipse cx="64" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(-12 64 83)"/>
+    <ellipse cx="92" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(12 92 83)"/>
+    <circle cx="78" cy="79" r="6.2" fill="#f4978e"/>
+    <circle cx="76.2" cy="77" r="1.8" fill="#fff" opacity=".7"/>
+    <circle cx="57.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <circle cx="98.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <ellipse cx="68" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <ellipse cx="89" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <circle cx="69" cy="67.8" r="1.1" fill="#fff"/>
+    <circle cx="90" cy="67.8" r="1.1" fill="#fff"/>
+    <path d="M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5" stroke="#fafafa" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+    <!-- hat -->
+    <path d="M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z" fill="#b91c1c"/>
+    <path d="M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z" fill="#991b1b" opacity=".0"/>
+    <g class="santa-pom santa-anim">
+      <path d="M62 17 C46 8 28 17 28 38" stroke="#b91c1c" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="28" cy="42" r="9" fill="#fafafa"/>
+    </g>
+    <rect x="46" y="41" width="64" height="20" rx="10" fill="#f5f5f4"/>
+    <rect x="46" y="56" width="64" height="5" rx="2.5" fill="#f97316"/>
+  </g>
+  <!-- ball + impact (outside the lean group so they stay put) -->
+  <g class="santa-ball santa-anim">
+    <circle cx="211" cy="116" r="8" fill="#fafafa"/>
+    <path d="M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122" stroke="#b91c1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="santa-burst santa-anim">
+    <polygon points="214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6" fill="#fde047"/>
+    <polygon points="214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4" fill="#fff"/>
+  </g>
+</svg></span>wind-up</div>
+  <div class="pose freeze" style="--t:-0.8s"><span class="santa-link"><svg class="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
+  <defs><clipPath id="sbc-contact"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
+  <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>
+  <g class="santa-lean santa-anim">
+    <!-- legs + boots -->
+    <rect x="52" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="88" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="42" y="181" width="32" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="84" y="181" width="34" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="42" y="172" width="32" height="15" rx="7.5" fill="#18181b"/>
+    <rect x="84" y="172" width="34" height="15" rx="7.5" fill="#18181b"/>
+    <!-- coat -->
+    <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c"/>
+    <g clip-path="url(#sbc-contact)">
+      <ellipse cx="104" cy="140" rx="30" ry="46" fill="#991b1b"/>
+      <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c" transform="translate(-9 -2)"/>
+      <rect x="73" y="86" width="10" height="84" rx="5" fill="#f5f5f4"/>
+      <rect x="30" y="121" width="96" height="15" fill="#18181b"/>
+      <rect x="30" y="152" width="96" height="18" fill="#f5f5f4"/>
+    </g>
+    <rect x="65" y="118" width="26" height="22" rx="4" fill="#f97316"/>
+    <rect x="71" y="123.5" width="14" height="11" rx="2" fill="#18181b"/>
+    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->
+    <g class="santa-arm santa-anim">
+      <path d="M106 106 L134 117" stroke="#b91c1c" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M124 113 L130 115.5" stroke="#f5f5f4" stroke-width="20" stroke-linecap="round" fill="none"/>
+      <g class="santa-bat santa-anim">
+        <g class="santa-swoosh santa-anim" opacity="0"><path d="M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z" fill="#fff" fill-opacity="0.5"/><path d="M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z" fill="#fff" fill-opacity="0.28"/><path d="M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z" fill="#fff" fill-opacity="0.12"/></g>
+        <rect x="-3" y="-26" width="6" height="38" rx="2.5" fill="#18181b"/>
+        <circle cx="0" cy="13" r="5" fill="#ea580c"/>
+        <path d="M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z" fill="#f97316"/>
+        <path d="M-4.4 -78 Q-4.8 -60 -3.6 -44" stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71" stroke="#fff7ed" stroke-width="2.2" fill="none"/>
+      </g>
+      <circle cx="145" cy="112" r="8" fill="#111113"/>
+      <circle cx="139" cy="120" r="8.5" fill="#18181b"/>
+      <path d="M134 116 q5 -2 9 2" stroke="#3f3f46" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    </g>
+    <!-- head -->
+    <ellipse cx="78" cy="68" rx="26" ry="23" fill="#fcd5b0"/>
+    <path d="M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z" fill="#f5f5f4"/>
+    <path d="M49 71 C44 104 60 120 78 120" stroke="#e4e4e7" stroke-width="3" stroke-linecap="round" fill="none" opacity=".0"/>
+    <path d="M70 90 Q78 99.5 86 90 Z" fill="#7f1d1d"/>
+    <ellipse cx="64" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(-12 64 83)"/>
+    <ellipse cx="92" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(12 92 83)"/>
+    <circle cx="78" cy="79" r="6.2" fill="#f4978e"/>
+    <circle cx="76.2" cy="77" r="1.8" fill="#fff" opacity=".7"/>
+    <circle cx="57.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <circle cx="98.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <ellipse cx="68" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <ellipse cx="89" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <circle cx="69" cy="67.8" r="1.1" fill="#fff"/>
+    <circle cx="90" cy="67.8" r="1.1" fill="#fff"/>
+    <path d="M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5" stroke="#fafafa" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+    <!-- hat -->
+    <path d="M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z" fill="#b91c1c"/>
+    <path d="M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z" fill="#991b1b" opacity=".0"/>
+    <g class="santa-pom santa-anim">
+      <path d="M62 17 C46 8 28 17 28 38" stroke="#b91c1c" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="28" cy="42" r="9" fill="#fafafa"/>
+    </g>
+    <rect x="46" y="41" width="64" height="20" rx="10" fill="#f5f5f4"/>
+    <rect x="46" y="56" width="64" height="5" rx="2.5" fill="#f97316"/>
+  </g>
+  <!-- ball + impact (outside the lean group so they stay put) -->
+  <g class="santa-ball santa-anim">
+    <circle cx="211" cy="116" r="8" fill="#fafafa"/>
+    <path d="M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122" stroke="#b91c1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="santa-burst santa-anim">
+    <polygon points="214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6" fill="#fde047"/>
+    <polygon points="214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4" fill="#fff"/>
+  </g>
+</svg></span>contact</div>
+  <div class="pose freeze" style="--t:-1s"><span class="santa-link"><svg class="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
+  <defs><clipPath id="sbc-hit"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
+  <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>
+  <g class="santa-lean santa-anim">
+    <!-- legs + boots -->
+    <rect x="52" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="88" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="42" y="181" width="32" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="84" y="181" width="34" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="42" y="172" width="32" height="15" rx="7.5" fill="#18181b"/>
+    <rect x="84" y="172" width="34" height="15" rx="7.5" fill="#18181b"/>
+    <!-- coat -->
+    <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c"/>
+    <g clip-path="url(#sbc-hit)">
+      <ellipse cx="104" cy="140" rx="30" ry="46" fill="#991b1b"/>
+      <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c" transform="translate(-9 -2)"/>
+      <rect x="73" y="86" width="10" height="84" rx="5" fill="#f5f5f4"/>
+      <rect x="30" y="121" width="96" height="15" fill="#18181b"/>
+      <rect x="30" y="152" width="96" height="18" fill="#f5f5f4"/>
+    </g>
+    <rect x="65" y="118" width="26" height="22" rx="4" fill="#f97316"/>
+    <rect x="71" y="123.5" width="14" height="11" rx="2" fill="#18181b"/>
+    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->
+    <g class="santa-arm santa-anim">
+      <path d="M106 106 L134 117" stroke="#b91c1c" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M124 113 L130 115.5" stroke="#f5f5f4" stroke-width="20" stroke-linecap="round" fill="none"/>
+      <g class="santa-bat santa-anim">
+        <g class="santa-swoosh santa-anim" opacity="0"><path d="M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z" fill="#fff" fill-opacity="0.5"/><path d="M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z" fill="#fff" fill-opacity="0.28"/><path d="M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z" fill="#fff" fill-opacity="0.12"/></g>
+        <rect x="-3" y="-26" width="6" height="38" rx="2.5" fill="#18181b"/>
+        <circle cx="0" cy="13" r="5" fill="#ea580c"/>
+        <path d="M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z" fill="#f97316"/>
+        <path d="M-4.4 -78 Q-4.8 -60 -3.6 -44" stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71" stroke="#fff7ed" stroke-width="2.2" fill="none"/>
+      </g>
+      <circle cx="145" cy="112" r="8" fill="#111113"/>
+      <circle cx="139" cy="120" r="8.5" fill="#18181b"/>
+      <path d="M134 116 q5 -2 9 2" stroke="#3f3f46" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    </g>
+    <!-- head -->
+    <ellipse cx="78" cy="68" rx="26" ry="23" fill="#fcd5b0"/>
+    <path d="M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z" fill="#f5f5f4"/>
+    <path d="M49 71 C44 104 60 120 78 120" stroke="#e4e4e7" stroke-width="3" stroke-linecap="round" fill="none" opacity=".0"/>
+    <path d="M70 90 Q78 99.5 86 90 Z" fill="#7f1d1d"/>
+    <ellipse cx="64" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(-12 64 83)"/>
+    <ellipse cx="92" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(12 92 83)"/>
+    <circle cx="78" cy="79" r="6.2" fill="#f4978e"/>
+    <circle cx="76.2" cy="77" r="1.8" fill="#fff" opacity=".7"/>
+    <circle cx="57.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <circle cx="98.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <ellipse cx="68" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <ellipse cx="89" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <circle cx="69" cy="67.8" r="1.1" fill="#fff"/>
+    <circle cx="90" cy="67.8" r="1.1" fill="#fff"/>
+    <path d="M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5" stroke="#fafafa" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+    <!-- hat -->
+    <path d="M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z" fill="#b91c1c"/>
+    <path d="M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z" fill="#991b1b" opacity=".0"/>
+    <g class="santa-pom santa-anim">
+      <path d="M62 17 C46 8 28 17 28 38" stroke="#b91c1c" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="28" cy="42" r="9" fill="#fafafa"/>
+    </g>
+    <rect x="46" y="41" width="64" height="20" rx="10" fill="#f5f5f4"/>
+    <rect x="46" y="56" width="64" height="5" rx="2.5" fill="#f97316"/>
+  </g>
+  <!-- ball + impact (outside the lean group so they stay put) -->
+  <g class="santa-ball santa-anim">
+    <circle cx="211" cy="116" r="8" fill="#fafafa"/>
+    <path d="M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122" stroke="#b91c1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="santa-burst santa-anim">
+    <polygon points="214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6" fill="#fde047"/>
+    <polygon points="214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4" fill="#fff"/>
+  </g>
+</svg></span>hit</div>
+  <div class="pose freeze" style="--t:-1.2s"><span class="santa-link"><svg class="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
+  <defs><clipPath id="sbc-follow-through"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
+  <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>
+  <g class="santa-lean santa-anim">
+    <!-- legs + boots -->
+    <rect x="52" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="88" y="156" width="16" height="22" fill="#7f1d1d"/>
+    <rect x="42" y="181" width="32" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="84" y="181" width="34" height="9" rx="4.5" fill="#f97316"/>
+    <rect x="42" y="172" width="32" height="15" rx="7.5" fill="#18181b"/>
+    <rect x="84" y="172" width="34" height="15" rx="7.5" fill="#18181b"/>
+    <!-- coat -->
+    <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c"/>
+    <g clip-path="url(#sbc-follow-through)">
+      <ellipse cx="104" cy="140" rx="30" ry="46" fill="#991b1b"/>
+      <ellipse cx="78" cy="128" rx="42" ry="40" fill="#b91c1c" transform="translate(-9 -2)"/>
+      <rect x="73" y="86" width="10" height="84" rx="5" fill="#f5f5f4"/>
+      <rect x="30" y="121" width="96" height="15" fill="#18181b"/>
+      <rect x="30" y="152" width="96" height="18" fill="#f5f5f4"/>
+    </g>
+    <rect x="65" y="118" width="26" height="22" rx="4" fill="#f97316"/>
+    <rect x="71" y="123.5" width="14" height="11" rx="2" fill="#18181b"/>
+    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->
+    <g class="santa-arm santa-anim">
+      <path d="M106 106 L134 117" stroke="#b91c1c" stroke-width="18" stroke-linecap="round" fill="none"/>
+      <path d="M124 113 L130 115.5" stroke="#f5f5f4" stroke-width="20" stroke-linecap="round" fill="none"/>
+      <g class="santa-bat santa-anim">
+        <g class="santa-swoosh santa-anim" opacity="0"><path d="M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z" fill="#fff" fill-opacity="0.5"/><path d="M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z" fill="#fff" fill-opacity="0.28"/><path d="M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z" fill="#fff" fill-opacity="0.12"/></g>
+        <rect x="-3" y="-26" width="6" height="38" rx="2.5" fill="#18181b"/>
+        <circle cx="0" cy="13" r="5" fill="#ea580c"/>
+        <path d="M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z" fill="#f97316"/>
+        <path d="M-4.4 -78 Q-4.8 -60 -3.6 -44" stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71" stroke="#fff7ed" stroke-width="2.2" fill="none"/>
+      </g>
+      <circle cx="145" cy="112" r="8" fill="#111113"/>
+      <circle cx="139" cy="120" r="8.5" fill="#18181b"/>
+      <path d="M134 116 q5 -2 9 2" stroke="#3f3f46" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+    </g>
+    <!-- head -->
+    <ellipse cx="78" cy="68" rx="26" ry="23" fill="#fcd5b0"/>
+    <path d="M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z" fill="#f5f5f4"/>
+    <path d="M49 71 C44 104 60 120 78 120" stroke="#e4e4e7" stroke-width="3" stroke-linecap="round" fill="none" opacity=".0"/>
+    <path d="M70 90 Q78 99.5 86 90 Z" fill="#7f1d1d"/>
+    <ellipse cx="64" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(-12 64 83)"/>
+    <ellipse cx="92" cy="83" rx="14" ry="7" fill="#fafafa" transform="rotate(12 92 83)"/>
+    <circle cx="78" cy="79" r="6.2" fill="#f4978e"/>
+    <circle cx="76.2" cy="77" r="1.8" fill="#fff" opacity=".7"/>
+    <circle cx="57.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <circle cx="98.5" cy="77" r="5.2" fill="#fb7185" opacity=".5"/>
+    <ellipse cx="68" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <ellipse cx="89" cy="69" rx="3" ry="3.6" fill="#18181b"/>
+    <circle cx="69" cy="67.8" r="1.1" fill="#fff"/>
+    <circle cx="90" cy="67.8" r="1.1" fill="#fff"/>
+    <path d="M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5" stroke="#fafafa" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+    <!-- hat -->
+    <path d="M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z" fill="#b91c1c"/>
+    <path d="M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z" fill="#991b1b" opacity=".0"/>
+    <g class="santa-pom santa-anim">
+      <path d="M62 17 C46 8 28 17 28 38" stroke="#b91c1c" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <circle cx="28" cy="42" r="9" fill="#fafafa"/>
+    </g>
+    <rect x="46" y="41" width="64" height="20" rx="10" fill="#f5f5f4"/>
+    <rect x="46" y="56" width="64" height="5" rx="2.5" fill="#f97316"/>
+  </g>
+  <!-- ball + impact (outside the lean group so they stay put) -->
+  <g class="santa-ball santa-anim">
+    <circle cx="211" cy="116" r="8" fill="#fafafa"/>
+    <path d="M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122" stroke="#b91c1c" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="santa-burst santa-anim">
+    <polygon points="214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6" fill="#fde047"/>
+    <polygon points="214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4" fill="#fff"/>
+  </g>
+</svg></span>follow-through</div>
+  <div class="pose rm-on" id="rmpose"><span class="santa-link"><span id="rmsvg"></span></span>reduced motion (static)</div>
+</div>
+<div class="sec">What to look at</div>
+<ul class="q">
+  <li>Animation: wind-up, swing, ball hit and flies off right (fades), then a pause. One swing is about 1.6s, repeating every 4s. Transform/opacity only.</li>
+  <li>Snow: about 50 flakes on desktop, 25 on phone, slow, low opacity, never on top of the text or buttons, clipped to the hero.</li>
+  <li>Reduced motion (toggle above, or the OS setting on the real site): no snow, Santa holds one mid-swing pose with the ball beside the bat.</li>
+</ul>
+<script>
+var T="<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><link href=\"https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap\" rel=\"stylesheet\"><style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:\"\"}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0}.bottom-0{bottom:0}.left-0{left:0}.right-0{right:0}.top-0{top:0}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-0{margin-left:0}.ml-0\\.5{margin-left:.125rem}.mt-12{margin-top:3rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.hidden{display:none}.h-0\\.5{height:.125rem}.h-12{height:3rem}.h-16{height:4rem}.h-3{height:.75rem}.h-32{height:8rem}.h-8{height:2rem}.h-full{height:100%}.w-1{width:.25rem}.w-3{width:.75rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-auto{width:auto}.w-full{width:100%}.max-w-5xl{max-width:64rem}.max-w-7xl{max-width:80rem}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-8{gap:2rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:9999px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-white\\/10{border-color:hsla(0,0%,100%,.1)}.border-white\\/40{border-color:hsla(0,0%,100%,.4)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\\/90{background-color:rgba(0,0,0,.9)}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\\/20{background-color:hsla(0,0%,100%,.2)}.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}.from-black\\/60{--tw-gradient-from:rgba(0,0,0,.6) var(--tw-gradient-from-position);--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.via-black\\/40{--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgba(0,0,0,.4) var(--tw-gradient-via-position),var(--tw-gradient-to)}.to-black{--tw-gradient-to:#000 var(--tw-gradient-to-position)}.object-cover{-o-object-fit:cover;object-fit:cover}.object-center{-o-object-position:center;object-position:center}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-16{padding-top:4rem}.pt-20{padding-top:5rem}.text-center{text-align:center}.text-5xl{font-size:3rem;line-height:1}.text-\\[11px\\]{font-size:11px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-\\[0\\.1em\\]{letter-spacing:.1em}.tracking-\\[0\\.3em\\]{letter-spacing:.3em}.tracking-widest{letter-spacing:.1em}.text-black{--tw-text-opacity:1;color:rgb(0 0 0/var(--tw-text-opacity,1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219/var(--tw-text-opacity,1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175/var(--tw-text-opacity,1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.no-underline{text-decoration-line:none}.opacity-30{opacity:.3}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@media (min-width:640px){.sm\\:h-40{height:10rem}.sm\\:flex-row{flex-direction:row}.sm\\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\\:text-7xl{font-size:4.5rem;line-height:1}.sm\\:text-\\[13px\\]{font-size:13px}.sm\\:tracking-\\[0\\.15em\\]{letter-spacing:.15em}}@media (min-width:768px){.md\\:flex{display:flex}.md\\:hidden{display:none}.md\\:h-48{height:12rem}.md\\:text-8xl{font-size:6rem;line-height:1}}\n.osw{font-family:Oswald,sans-serif}\nbody{background:#000;color:#fff;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}\n\n.santa-svg{display:block;height:100%;width:100%;overflow:visible}\n.santa-link{position:absolute;right:8px;top:2px;z-index:20;display:block;height:78px;aspect-ratio:250/200;line-height:0;text-decoration:none}\n.santa-link:focus-visible{outline:2px solid #f97316;outline-offset:4px}\n@media (min-width:768px){.santa-link{top:auto;bottom:0;right:12px;height:112px}}\n@media (min-width:1024px){.santa-link{right:16px;height:180px}}\n.santa-tag{position:absolute;bottom:100%;right:6px;margin-bottom:6px;white-space:nowrap;line-height:1;font-family:Oswald,sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:#f97316;color:#000;padding:6px 10px;opacity:0;transform:translateY(4px);transition:opacity .18s,transform .18s;pointer-events:none}\n.santa-tag:after{content:\"\";position:absolute;top:100%;right:18px;border:5px solid transparent;border-top-color:#f97316}\n.santa-link:hover .santa-tag,.santa-link:focus-visible .santa-tag{opacity:1;transform:none}\n@media (max-width:767px){.santa-tag{bottom:auto;right:100%;top:22%;margin:0 8px 0 0}.santa-tag:after{top:50%;right:-10px;margin-top:-5px;border-color:transparent;border-left-color:#f97316}}\n.santa-lean{transform-box:view-box;transform-origin:78px 188px;animation:santa-lean 4s ease-in-out infinite}\n.santa-arm{transform-box:view-box;transform-origin:106px 106px;animation:santa-arm 4s ease-in-out infinite}\n.santa-bat{transform:translate(138px,116px) rotate(-14deg);transform-box:view-box;transform-origin:0 0;animation:santa-bat 4s linear infinite}\n.santa-swoosh{animation:santa-swoosh 4s linear infinite}\n.santa-pom{transform-box:view-box;transform-origin:62px 17px;animation:santa-pom 4s ease-in-out infinite}\n.santa-ball{opacity:0;animation:santa-ball 4s linear infinite}\n.santa-burst{opacity:0;transform-box:view-box;transform-origin:214px 114px;animation:santa-burst 4s linear infinite}\n@keyframes santa-lean{0%,100%{transform:rotate(0)}10%{transform:rotate(-2.5deg)}20%{transform:rotate(3deg)}30%{transform:rotate(4deg)}44%{transform:rotate(0)}}\n@keyframes santa-arm{0%,100%{transform:rotate(0)}8%{transform:rotate(-7deg)}20%{transform:rotate(9deg)}30%{transform:rotate(14deg)}44%{transform:rotate(0)}}\n@keyframes santa-bat{\n  0%{transform:translate(138px,116px) rotate(-14deg);animation-timing-function:ease-out}\n  7%{transform:translate(138px,116px) rotate(-23deg);animation-timing-function:ease-in-out}\n  11%{transform:translate(138px,116px) rotate(-25deg);animation-timing-function:cubic-bezier(.55,.05,.9,.55)}\n  20%{transform:translate(138px,116px) rotate(92deg);animation-timing-function:cubic-bezier(.1,.6,.3,1)}\n  30%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}\n  33%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}\n  45%,100%{transform:translate(138px,116px) rotate(-14deg)}}\n@keyframes santa-swoosh{0%,13%{opacity:0}16%{opacity:.55}21%{opacity:.5}28%,100%{opacity:0}}\n@keyframes santa-pom{0%,100%{transform:rotate(0)}12%{transform:rotate(7deg)}22%{transform:rotate(-14deg)}34%{transform:rotate(9deg)}46%{transform:rotate(-4deg)}56%{transform:rotate(0)}}\n@keyframes santa-ball{\n  0%,3%{opacity:0;transform:translate(0,-84px);animation-timing-function:cubic-bezier(.45,0,.85,.55)}\n  5%{opacity:1;transform:translate(0,-80px)}\n  19.6%{opacity:1;transform:translate(0,0);animation-timing-function:cubic-bezier(.1,.6,.3,1)}\n  20%{opacity:1;transform:translate(0,0) scale(1)}\n  34%{opacity:0;transform:translate(150px,-56px) scale(.5)}\n  100%{opacity:0;transform:translate(150px,-56px) scale(.5)}}\n@keyframes santa-burst{0%,19.5%{opacity:0;transform:scale(.2)}20%{opacity:1;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}31%,100%{opacity:0;transform:scale(1.3)}}\n@media (prefers-reduced-motion:reduce){\n  .santa-anim{animation:none!important}\n  .santa-bat{transform:translate(138px,116px) rotate(74deg)}\n  .santa-arm{transform:rotate(6deg)}\n  .santa-ball{opacity:1;transform:none}\n  .santa-burst,.santa-swoosh{opacity:0}\n}\n\n\n.snowfall{position:absolute;inset:0;pointer-events:none;overflow:hidden}\n.snowfall i{position:absolute;top:-8px;left:var(--x);width:var(--s);height:var(--s);border-radius:9999px;background:#fff;opacity:var(--o);animation:snow-fall var(--d) linear var(--dl) infinite,snow-sway var(--sd) ease-in-out infinite alternate}\n@keyframes snow-fall{to{translate:var(--dx) 1100px}}\n@keyframes snow-sway{from{transform:translateX(calc(var(--sw) * -1))}to{transform:translateX(var(--sw))}}\n@media (max-width:767px){.snowfall i:nth-child(n+26){display:none}}\n@media (prefers-reduced-motion:reduce){.snowfall{display:none}}\n\n\nhtml.rm .snowfall{display:none}\nhtml.rm .santa-anim{animation:none!important}\nhtml.rm .santa-bat{transform:translate(138px,116px) rotate(74deg)}\nhtml.rm .santa-arm{transform:rotate(6deg)}\nhtml.rm .santa-ball{opacity:1;transform:none}\nhtml.rm .santa-burst,html.rm .santa-swoosh{opacity:0}\nhtml.restart .santa-anim{animation:none!important}\nhtml.frozen .santa-anim{animation-play-state:paused!important;animation-delay:var(--t)!important}\nhtml.frozen .snowfall i{animation-play-state:paused!important}\n<\/style><\/head><body>\n<nav class=\"fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-white/10\">\n  <div class=\"max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16\">\n    <a href=\"#\" class=\"flex items-center\"><img src=\"../public/assets/sultan-logo.png\" alt=\"Sultan of Swing\" class=\"h-12\"><\/a>\n    <div class=\"hidden md:flex items-center gap-8\">\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">HOW IT WORKS<\/button>\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">RESULTS<\/button>\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">REVIEWS<\/button>\n      <a href=\"#\" class=\"osw text-gray-300 text-sm tracking-widest\">VIDEOS<\/a>\n    <\/div>\n    <div class=\"flex items-center gap-4\">\n      <button class=\"osw bg-orange-500 text-white font-bold px-5 py-2 text-sm tracking-widest uppercase\">SHOP NOW<\/button>\n      <button class=\"md:hidden flex flex-col justify-center items-center gap-1.5 w-8 h-8\" aria-label=\"Menu\"><span class=\"block w-6 h-0.5 bg-white\"><\/span><span class=\"block w-6 h-0.5 bg-white\"><\/span><span class=\"block w-6 h-0.5 bg-white\"><\/span><\/button>\n    <\/div>\n  <\/div>\n<\/nav>\n<div class=\"pt-16 bg-black\">\n  <div class=\"osw flex items-center justify-center gap-x-4 gap-y-1 flex-wrap text-center px-3 py-2 text-[11px] sm:text-[13px] tracking-[0.1em] sm:tracking-[0.15em] uppercase\" style=\"background:linear-gradient(90deg,#b4232c,#7f1d1d 50%,#1f6b3a)\">\n    <span>Holiday gift deal: Sultan stands $350 with code <b>PLATOS#1<\/b><\/span>\n    <a href=\"#\" class=\"bg-orange-500 text-black font-bold px-3 py-0.5 no-underline\">Shop now<\/a>\n  <\/div>\n<\/div>\n<section class=\"relative flex items-center justify-center overflow-hidden\" style=\"min-height:800px\">\n  <div class=\"absolute inset-0\">\n    <img src=\"../public/assets/swinging.jpg\" alt=\"batter\" class=\"w-full h-full object-cover object-center opacity-30\">\n    <div class=\"absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black\"><\/div>\n  <\/div>\n  <div class=\"absolute left-0 top-0 bottom-0 w-1 bg-orange-500\"><\/div>\n  <!-- NEW (WO 0002): snow sits above the photo, below the content (content is z-10) -->\n  <div class=\"snowfall\" aria-hidden=\"true\" data-snow><\/div>\n  <div class=\"relative z-10 text-center px-4 max-w-5xl mx-auto pt-20\">\n    <div class=\"flex justify-center mb-8\"><img src=\"../public/assets/sultan-logo.png\" alt=\"Sultan of Swing\" class=\"h-32 sm:h-40 md:h-48 w-auto\"><\/div>\n    <div class=\"osw inline-block bg-orange-500 text-black text-xs font-bold tracking-[0.3em] px-4 py-1 mb-6 uppercase\">★ COACH TESTED · PLAYER APPROVED ★<\/div>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase mb-2\">TRAIN A<\/h1>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase text-orange-500 mb-2\">BETTER SWING<\/h1>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase mb-8\">ANYWHERE<\/h1>\n    <p class=\"text-gray-300 text-lg tracking-widest mb-10\">Timing &nbsp;•&nbsp; Barrel Control &nbsp;•&nbsp; Repetition<\/p>\n    <div class=\"flex flex-col sm:flex-row gap-4 justify-center\">\n      <button class=\"osw bg-orange-500 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase\">SHOP NOW<\/button>\n      <button class=\"osw border-2 border-white/40 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase flex items-center justify-center gap-3\"><span class=\"w-8 h-8 rounded-full bg-white/20 flex items-center justify-center\"><svg class=\"w-3 h-3 ml-0.5\" fill=\"currentColor\" viewBox=\"0 0 10 10\"><path d=\"M2 1.5l7 3.5-7 3.5V1.5z\"/><\/svg><\/span>WATCH DEMO<\/button>\n    <\/div>\n    <div class=\"mt-12 flex justify-center gap-10 text-center\">\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Ships Fast<\/div>\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Durable<\/div>\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Portable<\/div>\n    <\/div>\n  <\/div>\n  <!-- NEW (WO 0002): Santa. Phone = top-right under the strip; tablet/desktop = bottom-right corner. -->\n  <a href=\"#\" class=\"santa-link\" aria-label=\"Shop the $350 holiday deal\" data-santa>\n    <svg class=\"santa-svg\" viewBox=\"0 0 250 200\" aria-hidden=\"true\" focusable=\"false\">\n  <defs><clipPath id=\"santa-body-clip\"><ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\"/><\/clipPath><\/defs>\n  <ellipse cx=\"82\" cy=\"191\" rx=\"50\" ry=\"6\" fill=\"#000\" opacity=\".4\"/>\n  <g class=\"santa-lean santa-anim\">\n    <!-- legs + boots -->\n    <rect x=\"52\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"88\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"42\" y=\"181\" width=\"32\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"84\" y=\"181\" width=\"34\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"42\" y=\"172\" width=\"32\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <rect x=\"84\" y=\"172\" width=\"34\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <!-- coat -->\n    <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\"/>\n    <g clip-path=\"url(#santa-body-clip)\">\n      <ellipse cx=\"104\" cy=\"140\" rx=\"30\" ry=\"46\" fill=\"#991b1b\"/>\n      <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\" transform=\"translate(-9 -2)\"/>\n      <rect x=\"73\" y=\"86\" width=\"10\" height=\"84\" rx=\"5\" fill=\"#f5f5f4\"/>\n      <rect x=\"30\" y=\"121\" width=\"96\" height=\"15\" fill=\"#18181b\"/>\n      <rect x=\"30\" y=\"152\" width=\"96\" height=\"18\" fill=\"#f5f5f4\"/>\n    <\/g>\n    <rect x=\"65\" y=\"118\" width=\"26\" height=\"22\" rx=\"4\" fill=\"#f97316\"/>\n    <rect x=\"71\" y=\"123.5\" width=\"14\" height=\"11\" rx=\"2\" fill=\"#18181b\"/>\n    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->\n    <g class=\"santa-arm santa-anim\">\n      <path d=\"M106 106 L134 117\" stroke=\"#b91c1c\" stroke-width=\"18\" stroke-linecap=\"round\" fill=\"none\"/>\n      <path d=\"M124 113 L130 115.5\" stroke=\"#f5f5f4\" stroke-width=\"20\" stroke-linecap=\"round\" fill=\"none\"/>\n      <g class=\"santa-bat santa-anim\">\n        <g class=\"santa-swoosh santa-anim\" opacity=\"0\"><path d=\"M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z\" fill=\"#fff\" fill-opacity=\"0.5\"/><path d=\"M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z\" fill=\"#fff\" fill-opacity=\"0.28\"/><path d=\"M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z\" fill=\"#fff\" fill-opacity=\"0.12\"/><\/g>\n        <rect x=\"-3\" y=\"-26\" width=\"6\" height=\"38\" rx=\"2.5\" fill=\"#18181b\"/>\n        <circle cx=\"0\" cy=\"13\" r=\"5\" fill=\"#ea580c\"/>\n        <path d=\"M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z\" fill=\"#f97316\"/>\n        <path d=\"M-4.4 -78 Q-4.8 -60 -3.6 -44\" stroke=\"#fdba74\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/>\n        <path d=\"M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71\" stroke=\"#fff7ed\" stroke-width=\"2.2\" fill=\"none\"/>\n      <\/g>\n      <circle cx=\"145\" cy=\"112\" r=\"8\" fill=\"#111113\"/>\n      <circle cx=\"139\" cy=\"120\" r=\"8.5\" fill=\"#18181b\"/>\n      <path d=\"M134 116 q5 -2 9 2\" stroke=\"#3f3f46\" stroke-width=\"1.4\" stroke-linecap=\"round\" fill=\"none\"/>\n    <\/g>\n    <!-- head -->\n    <ellipse cx=\"78\" cy=\"68\" rx=\"26\" ry=\"23\" fill=\"#fcd5b0\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z\" fill=\"#f5f5f4\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120\" stroke=\"#e4e4e7\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\" opacity=\".0\"/>\n    <path d=\"M70 90 Q78 99.5 86 90 Z\" fill=\"#7f1d1d\"/>\n    <ellipse cx=\"64\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(-12 64 83)\"/>\n    <ellipse cx=\"92\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(12 92 83)\"/>\n    <circle cx=\"78\" cy=\"79\" r=\"6.2\" fill=\"#f4978e\"/>\n    <circle cx=\"76.2\" cy=\"77\" r=\"1.8\" fill=\"#fff\" opacity=\".7\"/>\n    <circle cx=\"57.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <circle cx=\"98.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <ellipse cx=\"68\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <ellipse cx=\"89\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <circle cx=\"69\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <circle cx=\"90\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <path d=\"M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5\" stroke=\"#fafafa\" stroke-width=\"4.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <!-- hat -->\n    <path d=\"M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z\" fill=\"#b91c1c\"/>\n    <path d=\"M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z\" fill=\"#991b1b\" opacity=\".0\"/>\n    <g class=\"santa-pom santa-anim\">\n      <path d=\"M62 17 C46 8 28 17 28 38\" stroke=\"#b91c1c\" stroke-width=\"13\" stroke-linecap=\"round\" fill=\"none\"/>\n      <circle cx=\"28\" cy=\"42\" r=\"9\" fill=\"#fafafa\"/>\n    <\/g>\n    <rect x=\"46\" y=\"41\" width=\"64\" height=\"20\" rx=\"10\" fill=\"#f5f5f4\"/>\n    <rect x=\"46\" y=\"56\" width=\"64\" height=\"5\" rx=\"2.5\" fill=\"#f97316\"/>\n  <\/g>\n  <!-- ball + impact (outside the lean group so they stay put) -->\n  <g class=\"santa-ball santa-anim\">\n    <circle cx=\"211\" cy=\"116\" r=\"8\" fill=\"#fafafa\"/>\n    <path d=\"M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122\" stroke=\"#b91c1c\" stroke-width=\"1.3\" stroke-linecap=\"round\" fill=\"none\"/>\n  <\/g>\n  <g class=\"santa-burst santa-anim\">\n    <polygon points=\"214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6\" fill=\"#fde047\"/>\n    <polygon points=\"214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4\" fill=\"#fff\"/>\n  <\/g>\n<\/svg>\n    <span class=\"santa-tag\">Shop the $350 deal<\/span>\n  <\/a>\n<\/section><script>\n(function(){var s=document.querySelector('[data-snow]'),h='';for(var k=0;k<50;k++){var d=11+(k*7%12);h+='<i style=\"--x:'+((k*37+11)%100)+'%;--s:'+(2+(k%4))+'px;--o:'+(0.28+(k%5)*0.12).toFixed(2)+';--d:'+d+'s;--dl:-'+((k*1.7)%d).toFixed(1)+'s;--dx:'+((k%2?1:-1)*(20+(k%3)*15))+'px;--sw:'+(6+(k%4)*3)+'px;--sd:'+(3+(k%4))+'s\"><\/i>';}s.innerHTML=h;\ndocument.querySelector('[data-santa]').addEventListener('click',function(e){e.preventDefault();});})();\n<\/script><\/body><\/html>", P="<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><link href=\"https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap\" rel=\"stylesheet\"><style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:\"\"}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0}.bottom-0{bottom:0}.left-0{left:0}.right-0{right:0}.top-0{top:0}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-0{margin-left:0}.ml-0\\.5{margin-left:.125rem}.mt-12{margin-top:3rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.hidden{display:none}.h-0\\.5{height:.125rem}.h-12{height:3rem}.h-16{height:4rem}.h-3{height:.75rem}.h-32{height:8rem}.h-8{height:2rem}.h-full{height:100%}.w-1{width:.25rem}.w-3{width:.75rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-auto{width:auto}.w-full{width:100%}.max-w-5xl{max-width:64rem}.max-w-7xl{max-width:80rem}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-8{gap:2rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:9999px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-white\\/10{border-color:hsla(0,0%,100%,.1)}.border-white\\/40{border-color:hsla(0,0%,100%,.4)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\\/90{background-color:rgba(0,0,0,.9)}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\\/20{background-color:hsla(0,0%,100%,.2)}.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}.from-black\\/60{--tw-gradient-from:rgba(0,0,0,.6) var(--tw-gradient-from-position);--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.via-black\\/40{--tw-gradient-to:transparent var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),rgba(0,0,0,.4) var(--tw-gradient-via-position),var(--tw-gradient-to)}.to-black{--tw-gradient-to:#000 var(--tw-gradient-to-position)}.object-cover{-o-object-fit:cover;object-fit:cover}.object-center{-o-object-position:center;object-position:center}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-16{padding-top:4rem}.pt-20{padding-top:5rem}.text-center{text-align:center}.text-5xl{font-size:3rem;line-height:1}.text-\\[11px\\]{font-size:11px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-\\[0\\.1em\\]{letter-spacing:.1em}.tracking-\\[0\\.3em\\]{letter-spacing:.3em}.tracking-widest{letter-spacing:.1em}.text-black{--tw-text-opacity:1;color:rgb(0 0 0/var(--tw-text-opacity,1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219/var(--tw-text-opacity,1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175/var(--tw-text-opacity,1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.no-underline{text-decoration-line:none}.opacity-30{opacity:.3}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@media (min-width:640px){.sm\\:h-40{height:10rem}.sm\\:flex-row{flex-direction:row}.sm\\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\\:text-7xl{font-size:4.5rem;line-height:1}.sm\\:text-\\[13px\\]{font-size:13px}.sm\\:tracking-\\[0\\.15em\\]{letter-spacing:.15em}}@media (min-width:768px){.md\\:flex{display:flex}.md\\:hidden{display:none}.md\\:h-48{height:12rem}.md\\:text-8xl{font-size:6rem;line-height:1}}\n.osw{font-family:Oswald,sans-serif}\nbody{background:#000;color:#fff;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}\n\n.santa-svg{display:block;height:100%;width:100%;overflow:visible}\n.santa-link{position:absolute;right:8px;top:2px;z-index:20;display:block;height:78px;aspect-ratio:250/200;line-height:0;text-decoration:none}\n.santa-link:focus-visible{outline:2px solid #f97316;outline-offset:4px}\n@media (min-width:768px){.santa-link{top:auto;bottom:0;right:12px;height:112px}}\n@media (min-width:1024px){.santa-link{right:16px;height:180px}}\n.santa-tag{position:absolute;bottom:100%;right:6px;margin-bottom:6px;white-space:nowrap;line-height:1;font-family:Oswald,sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:#f97316;color:#000;padding:6px 10px;opacity:0;transform:translateY(4px);transition:opacity .18s,transform .18s;pointer-events:none}\n.santa-tag:after{content:\"\";position:absolute;top:100%;right:18px;border:5px solid transparent;border-top-color:#f97316}\n.santa-link:hover .santa-tag,.santa-link:focus-visible .santa-tag{opacity:1;transform:none}\n@media (max-width:767px){.santa-tag{bottom:auto;right:100%;top:22%;margin:0 8px 0 0}.santa-tag:after{top:50%;right:-10px;margin-top:-5px;border-color:transparent;border-left-color:#f97316}}\n.santa-lean{transform-box:view-box;transform-origin:78px 188px;animation:santa-lean 4s ease-in-out infinite}\n.santa-arm{transform-box:view-box;transform-origin:106px 106px;animation:santa-arm 4s ease-in-out infinite}\n.santa-bat{transform:translate(138px,116px) rotate(-14deg);transform-box:view-box;transform-origin:0 0;animation:santa-bat 4s linear infinite}\n.santa-swoosh{animation:santa-swoosh 4s linear infinite}\n.santa-pom{transform-box:view-box;transform-origin:62px 17px;animation:santa-pom 4s ease-in-out infinite}\n.santa-ball{opacity:0;animation:santa-ball 4s linear infinite}\n.santa-burst{opacity:0;transform-box:view-box;transform-origin:214px 114px;animation:santa-burst 4s linear infinite}\n@keyframes santa-lean{0%,100%{transform:rotate(0)}10%{transform:rotate(-2.5deg)}20%{transform:rotate(3deg)}30%{transform:rotate(4deg)}44%{transform:rotate(0)}}\n@keyframes santa-arm{0%,100%{transform:rotate(0)}8%{transform:rotate(-7deg)}20%{transform:rotate(9deg)}30%{transform:rotate(14deg)}44%{transform:rotate(0)}}\n@keyframes santa-bat{\n  0%{transform:translate(138px,116px) rotate(-14deg);animation-timing-function:ease-out}\n  7%{transform:translate(138px,116px) rotate(-23deg);animation-timing-function:ease-in-out}\n  11%{transform:translate(138px,116px) rotate(-25deg);animation-timing-function:cubic-bezier(.55,.05,.9,.55)}\n  20%{transform:translate(138px,116px) rotate(92deg);animation-timing-function:cubic-bezier(.1,.6,.3,1)}\n  30%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}\n  33%{transform:translate(138px,116px) rotate(118deg);animation-timing-function:ease-in-out}\n  45%,100%{transform:translate(138px,116px) rotate(-14deg)}}\n@keyframes santa-swoosh{0%,13%{opacity:0}16%{opacity:.55}21%{opacity:.5}28%,100%{opacity:0}}\n@keyframes santa-pom{0%,100%{transform:rotate(0)}12%{transform:rotate(7deg)}22%{transform:rotate(-14deg)}34%{transform:rotate(9deg)}46%{transform:rotate(-4deg)}56%{transform:rotate(0)}}\n@keyframes santa-ball{\n  0%,3%{opacity:0;transform:translate(0,-84px);animation-timing-function:cubic-bezier(.45,0,.85,.55)}\n  5%{opacity:1;transform:translate(0,-80px)}\n  19.6%{opacity:1;transform:translate(0,0);animation-timing-function:cubic-bezier(.1,.6,.3,1)}\n  20%{opacity:1;transform:translate(0,0) scale(1)}\n  34%{opacity:0;transform:translate(150px,-56px) scale(.5)}\n  100%{opacity:0;transform:translate(150px,-56px) scale(.5)}}\n@keyframes santa-burst{0%,19.5%{opacity:0;transform:scale(.2)}20%{opacity:1;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}31%,100%{opacity:0;transform:scale(1.3)}}\n@media (prefers-reduced-motion:reduce){\n  .santa-anim{animation:none!important}\n  .santa-bat{transform:translate(138px,116px) rotate(74deg)}\n  .santa-arm{transform:rotate(6deg)}\n  .santa-ball{opacity:1;transform:none}\n  .santa-burst,.santa-swoosh{opacity:0}\n}\n\n\n.snowfall{position:absolute;inset:0;pointer-events:none;overflow:hidden}\n.snowfall i{position:absolute;top:-8px;left:var(--x);width:var(--s);height:var(--s);border-radius:9999px;background:#fff;opacity:var(--o);animation:snow-fall var(--d) linear var(--dl) infinite,snow-sway var(--sd) ease-in-out infinite alternate}\n@keyframes snow-fall{to{translate:var(--dx) 1100px}}\n@keyframes snow-sway{from{transform:translateX(calc(var(--sw) * -1))}to{transform:translateX(var(--sw))}}\n@media (max-width:767px){.snowfall i:nth-child(n+26){display:none}}\n@media (prefers-reduced-motion:reduce){.snowfall{display:none}}\n\n\nhtml.rm .snowfall{display:none}\nhtml.rm .santa-anim{animation:none!important}\nhtml.rm .santa-bat{transform:translate(138px,116px) rotate(74deg)}\nhtml.rm .santa-arm{transform:rotate(6deg)}\nhtml.rm .santa-ball{opacity:1;transform:none}\nhtml.rm .santa-burst,html.rm .santa-swoosh{opacity:0}\nhtml.restart .santa-anim{animation:none!important}\nhtml.frozen .santa-anim{animation-play-state:paused!important;animation-delay:var(--t)!important}\nhtml.frozen .snowfall i{animation-play-state:paused!important}\n<\/style><\/head><body>\n<nav class=\"fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-white/10\">\n  <div class=\"max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16\">\n    <a href=\"#\" class=\"flex items-center\"><img src=\"../public/assets/sultan-logo.png\" alt=\"Sultan of Swing\" class=\"h-12\"><\/a>\n    <div class=\"hidden md:flex items-center gap-8\">\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">HOW IT WORKS<\/button>\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">RESULTS<\/button>\n      <button class=\"osw text-gray-300 text-sm tracking-widest\">REVIEWS<\/button>\n      <a href=\"#\" class=\"osw text-gray-300 text-sm tracking-widest\">VIDEOS<\/a>\n    <\/div>\n    <div class=\"flex items-center gap-4\">\n      <button class=\"osw bg-orange-500 text-white font-bold px-5 py-2 text-sm tracking-widest uppercase\">SHOP NOW<\/button>\n      <button class=\"md:hidden flex flex-col justify-center items-center gap-1.5 w-8 h-8\" aria-label=\"Menu\"><span class=\"block w-6 h-0.5 bg-white\"><\/span><span class=\"block w-6 h-0.5 bg-white\"><\/span><span class=\"block w-6 h-0.5 bg-white\"><\/span><\/button>\n    <\/div>\n  <\/div>\n<\/nav>\n<div class=\"pt-16 bg-black\">\n  <div class=\"osw flex items-center justify-center gap-x-4 gap-y-1 flex-wrap text-center px-3 py-2 text-[11px] sm:text-[13px] tracking-[0.1em] sm:tracking-[0.15em] uppercase\" style=\"background:linear-gradient(90deg,#b4232c,#7f1d1d 50%,#1f6b3a)\">\n    <span>Holiday gift deal: Sultan stands $350 with code <b>PLATOS#1<\/b><\/span>\n    <a href=\"#\" class=\"bg-orange-500 text-black font-bold px-3 py-0.5 no-underline\">Shop now<\/a>\n  <\/div>\n<\/div>\n<section class=\"relative flex items-center justify-center overflow-hidden\" style=\"min-height:844px\">\n  <div class=\"absolute inset-0\">\n    <img src=\"../public/assets/swinging.jpg\" alt=\"batter\" class=\"w-full h-full object-cover object-center opacity-30\">\n    <div class=\"absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black\"><\/div>\n  <\/div>\n  <div class=\"absolute left-0 top-0 bottom-0 w-1 bg-orange-500\"><\/div>\n  <!-- NEW (WO 0002): snow sits above the photo, below the content (content is z-10) -->\n  <div class=\"snowfall\" aria-hidden=\"true\" data-snow><\/div>\n  <div class=\"relative z-10 text-center px-4 max-w-5xl mx-auto pt-20\">\n    <div class=\"flex justify-center mb-8\"><img src=\"../public/assets/sultan-logo.png\" alt=\"Sultan of Swing\" class=\"h-32 sm:h-40 md:h-48 w-auto\"><\/div>\n    <div class=\"osw inline-block bg-orange-500 text-black text-xs font-bold tracking-[0.3em] px-4 py-1 mb-6 uppercase\">★ COACH TESTED · PLAYER APPROVED ★<\/div>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase mb-2\">TRAIN A<\/h1>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase text-orange-500 mb-2\">BETTER SWING<\/h1>\n    <h1 class=\"osw text-5xl sm:text-7xl md:text-8xl font-bold leading-none uppercase mb-8\">ANYWHERE<\/h1>\n    <p class=\"text-gray-300 text-lg tracking-widest mb-10\">Timing &nbsp;•&nbsp; Barrel Control &nbsp;•&nbsp; Repetition<\/p>\n    <div class=\"flex flex-col sm:flex-row gap-4 justify-center\">\n      <button class=\"osw bg-orange-500 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase\">SHOP NOW<\/button>\n      <button class=\"osw border-2 border-white/40 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase flex items-center justify-center gap-3\"><span class=\"w-8 h-8 rounded-full bg-white/20 flex items-center justify-center\"><svg class=\"w-3 h-3 ml-0.5\" fill=\"currentColor\" viewBox=\"0 0 10 10\"><path d=\"M2 1.5l7 3.5-7 3.5V1.5z\"/><\/svg><\/span>WATCH DEMO<\/button>\n    <\/div>\n    <div class=\"mt-12 flex justify-center gap-10 text-center\">\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Ships Fast<\/div>\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Durable<\/div>\n      <div class=\"flex items-center gap-2 text-gray-400 text-sm tracking-widest\"><span class=\"text-orange-500\">✓<\/span> Portable<\/div>\n    <\/div>\n  <\/div>\n  <!-- NEW (WO 0002): Santa. Phone = top-right under the strip; tablet/desktop = bottom-right corner. -->\n  <a href=\"#\" class=\"santa-link\" aria-label=\"Shop the $350 holiday deal\" data-santa>\n    <svg class=\"santa-svg\" viewBox=\"0 0 250 200\" aria-hidden=\"true\" focusable=\"false\">\n  <defs><clipPath id=\"santa-body-clip\"><ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\"/><\/clipPath><\/defs>\n  <ellipse cx=\"82\" cy=\"191\" rx=\"50\" ry=\"6\" fill=\"#000\" opacity=\".4\"/>\n  <g class=\"santa-lean santa-anim\">\n    <!-- legs + boots -->\n    <rect x=\"52\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"88\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"42\" y=\"181\" width=\"32\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"84\" y=\"181\" width=\"34\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"42\" y=\"172\" width=\"32\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <rect x=\"84\" y=\"172\" width=\"34\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <!-- coat -->\n    <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\"/>\n    <g clip-path=\"url(#santa-body-clip)\">\n      <ellipse cx=\"104\" cy=\"140\" rx=\"30\" ry=\"46\" fill=\"#991b1b\"/>\n      <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\" transform=\"translate(-9 -2)\"/>\n      <rect x=\"73\" y=\"86\" width=\"10\" height=\"84\" rx=\"5\" fill=\"#f5f5f4\"/>\n      <rect x=\"30\" y=\"121\" width=\"96\" height=\"15\" fill=\"#18181b\"/>\n      <rect x=\"30\" y=\"152\" width=\"96\" height=\"18\" fill=\"#f5f5f4\"/>\n    <\/g>\n    <rect x=\"65\" y=\"118\" width=\"26\" height=\"22\" rx=\"4\" fill=\"#f97316\"/>\n    <rect x=\"71\" y=\"123.5\" width=\"14\" height=\"11\" rx=\"2\" fill=\"#18181b\"/>\n    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->\n    <g class=\"santa-arm santa-anim\">\n      <path d=\"M106 106 L134 117\" stroke=\"#b91c1c\" stroke-width=\"18\" stroke-linecap=\"round\" fill=\"none\"/>\n      <path d=\"M124 113 L130 115.5\" stroke=\"#f5f5f4\" stroke-width=\"20\" stroke-linecap=\"round\" fill=\"none\"/>\n      <g class=\"santa-bat santa-anim\">\n        <g class=\"santa-swoosh santa-anim\" opacity=\"0\"><path d=\"M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z\" fill=\"#fff\" fill-opacity=\"0.5\"/><path d=\"M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z\" fill=\"#fff\" fill-opacity=\"0.28\"/><path d=\"M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z\" fill=\"#fff\" fill-opacity=\"0.12\"/><\/g>\n        <rect x=\"-3\" y=\"-26\" width=\"6\" height=\"38\" rx=\"2.5\" fill=\"#18181b\"/>\n        <circle cx=\"0\" cy=\"13\" r=\"5\" fill=\"#ea580c\"/>\n        <path d=\"M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z\" fill=\"#f97316\"/>\n        <path d=\"M-4.4 -78 Q-4.8 -60 -3.6 -44\" stroke=\"#fdba74\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/>\n        <path d=\"M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71\" stroke=\"#fff7ed\" stroke-width=\"2.2\" fill=\"none\"/>\n      <\/g>\n      <circle cx=\"145\" cy=\"112\" r=\"8\" fill=\"#111113\"/>\n      <circle cx=\"139\" cy=\"120\" r=\"8.5\" fill=\"#18181b\"/>\n      <path d=\"M134 116 q5 -2 9 2\" stroke=\"#3f3f46\" stroke-width=\"1.4\" stroke-linecap=\"round\" fill=\"none\"/>\n    <\/g>\n    <!-- head -->\n    <ellipse cx=\"78\" cy=\"68\" rx=\"26\" ry=\"23\" fill=\"#fcd5b0\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z\" fill=\"#f5f5f4\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120\" stroke=\"#e4e4e7\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\" opacity=\".0\"/>\n    <path d=\"M70 90 Q78 99.5 86 90 Z\" fill=\"#7f1d1d\"/>\n    <ellipse cx=\"64\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(-12 64 83)\"/>\n    <ellipse cx=\"92\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(12 92 83)\"/>\n    <circle cx=\"78\" cy=\"79\" r=\"6.2\" fill=\"#f4978e\"/>\n    <circle cx=\"76.2\" cy=\"77\" r=\"1.8\" fill=\"#fff\" opacity=\".7\"/>\n    <circle cx=\"57.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <circle cx=\"98.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <ellipse cx=\"68\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <ellipse cx=\"89\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <circle cx=\"69\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <circle cx=\"90\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <path d=\"M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5\" stroke=\"#fafafa\" stroke-width=\"4.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <!-- hat -->\n    <path d=\"M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z\" fill=\"#b91c1c\"/>\n    <path d=\"M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z\" fill=\"#991b1b\" opacity=\".0\"/>\n    <g class=\"santa-pom santa-anim\">\n      <path d=\"M62 17 C46 8 28 17 28 38\" stroke=\"#b91c1c\" stroke-width=\"13\" stroke-linecap=\"round\" fill=\"none\"/>\n      <circle cx=\"28\" cy=\"42\" r=\"9\" fill=\"#fafafa\"/>\n    <\/g>\n    <rect x=\"46\" y=\"41\" width=\"64\" height=\"20\" rx=\"10\" fill=\"#f5f5f4\"/>\n    <rect x=\"46\" y=\"56\" width=\"64\" height=\"5\" rx=\"2.5\" fill=\"#f97316\"/>\n  <\/g>\n  <!-- ball + impact (outside the lean group so they stay put) -->\n  <g class=\"santa-ball santa-anim\">\n    <circle cx=\"211\" cy=\"116\" r=\"8\" fill=\"#fafafa\"/>\n    <path d=\"M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122\" stroke=\"#b91c1c\" stroke-width=\"1.3\" stroke-linecap=\"round\" fill=\"none\"/>\n  <\/g>\n  <g class=\"santa-burst santa-anim\">\n    <polygon points=\"214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6\" fill=\"#fde047\"/>\n    <polygon points=\"214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4\" fill=\"#fff\"/>\n  <\/g>\n<\/svg>\n    <span class=\"santa-tag\">Shop the $350 deal<\/span>\n  <\/a>\n<\/section><script>\n(function(){var s=document.querySelector('[data-snow]'),h='';for(var k=0;k<50;k++){var d=11+(k*7%12);h+='<i style=\"--x:'+((k*37+11)%100)+'%;--s:'+(2+(k%4))+'px;--o:'+(0.28+(k%5)*0.12).toFixed(2)+';--d:'+d+'s;--dl:-'+((k*1.7)%d).toFixed(1)+'s;--dx:'+((k%2?1:-1)*(20+(k%3)*15))+'px;--sw:'+(6+(k%4)*3)+'px;--sd:'+(3+(k%4))+'s\"><\/i>';}s.innerHTML=h;\ndocument.querySelector('[data-santa]').addEventListener('click',function(e){e.preventDefault();});})();\n<\/script><\/body><\/html>";
+var fd=document.getElementById('fd'), fp=document.getElementById('fp');
+function fit(f){try{f.style.height=f.contentDocument.documentElement.scrollHeight+'px'}catch(e){}}
+fd.onload=function(){fit(fd);apply(fd)};fp.onload=function(){fit(fp);apply(fp)};
+fd.srcdoc=T; fp.srcdoc=P;
+var state={pose:'play',rm:false};
+function apply(f){try{var h=f.contentDocument.documentElement;h.classList.toggle('rm',state.rm);if(state.pose==='play'){h.classList.remove('frozen')}else{h.classList.remove('frozen');h.classList.add('restart');void h.offsetWidth;h.style.setProperty('--t',-state.pose+'s');h.classList.remove('restart');h.classList.add('frozen')}}catch(e){}}
+window.setPose=function(p){state.pose=p;apply(fd);apply(fp);document.querySelectorAll('[data-pose]').forEach(function(b){b.classList.toggle('on',b.dataset.pose===String(p))})};
+window.setRM=function(v){state.rm=v;apply(fd);apply(fp);var b=document.querySelector('[data-rm]');b.classList.toggle('on',v);b.textContent='Reduced-motion variant: '+(v?'ON':'OFF')};
+document.getElementById('ctl').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.rm){setRM(!state.rm)}else{setPose(b.dataset.pose==='play'?'play':parseFloat(b.dataset.pose))}});
+// static reduced-motion pose in the close-up row
+(function(){var el=document.getElementById('rmsvg');var tmp=document.createElement('div');tmp.innerHTML="<svg class=\"santa-svg\" viewBox=\"0 0 250 200\" aria-hidden=\"true\" focusable=\"false\">\n  <defs><clipPath id=\"sbc-rm\"><ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\"/><\/clipPath><\/defs>\n  <ellipse cx=\"82\" cy=\"191\" rx=\"50\" ry=\"6\" fill=\"#000\" opacity=\".4\"/>\n  <g class=\"santa-lean santa-rmstatic\">\n    <!-- legs + boots -->\n    <rect x=\"52\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"88\" y=\"156\" width=\"16\" height=\"22\" fill=\"#7f1d1d\"/>\n    <rect x=\"42\" y=\"181\" width=\"32\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"84\" y=\"181\" width=\"34\" height=\"9\" rx=\"4.5\" fill=\"#f97316\"/>\n    <rect x=\"42\" y=\"172\" width=\"32\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <rect x=\"84\" y=\"172\" width=\"34\" height=\"15\" rx=\"7.5\" fill=\"#18181b\"/>\n    <!-- coat -->\n    <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\"/>\n    <g clip-path=\"url(#sbc-rm)\">\n      <ellipse cx=\"104\" cy=\"140\" rx=\"30\" ry=\"46\" fill=\"#991b1b\"/>\n      <ellipse cx=\"78\" cy=\"128\" rx=\"42\" ry=\"40\" fill=\"#b91c1c\" transform=\"translate(-9 -2)\"/>\n      <rect x=\"73\" y=\"86\" width=\"10\" height=\"84\" rx=\"5\" fill=\"#f5f5f4\"/>\n      <rect x=\"30\" y=\"121\" width=\"96\" height=\"15\" fill=\"#18181b\"/>\n      <rect x=\"30\" y=\"152\" width=\"96\" height=\"18\" fill=\"#f5f5f4\"/>\n    <\/g>\n    <rect x=\"65\" y=\"118\" width=\"26\" height=\"22\" rx=\"4\" fill=\"#f97316\"/>\n    <rect x=\"71\" y=\"123.5\" width=\"14\" height=\"11\" rx=\"2\" fill=\"#18181b\"/>\n    <!-- arm + bat (arm swings from the shoulder, bat pivots at the hands) -->\n    <g class=\"santa-arm santa-rmstatic\">\n      <path d=\"M106 106 L134 117\" stroke=\"#b91c1c\" stroke-width=\"18\" stroke-linecap=\"round\" fill=\"none\"/>\n      <path d=\"M124 113 L130 115.5\" stroke=\"#f5f5f4\" stroke-width=\"20\" stroke-linecap=\"round\" fill=\"none\"/>\n      <g class=\"santa-bat santa-rmstatic\">\n        <g class=\"santa-swoosh santa-rmstatic\" opacity=\"0\"><path d=\"M0.0 -94.0 A94 94 0 0 0 -29.0 -89.4 L-19.8 -60.9 A64 64 0 0 1 0.0 -64.0 Z\" fill=\"#fff\" fill-opacity=\"0.5\"/><path d=\"M-29.0 -89.4 A94 94 0 0 0 -55.3 -76.0 L-37.6 -51.8 A64 64 0 0 1 -19.8 -60.9 Z\" fill=\"#fff\" fill-opacity=\"0.28\"/><path d=\"M-55.3 -76.0 A94 94 0 0 0 -76.0 -55.3 L-51.8 -37.6 A64 64 0 0 1 -37.6 -51.8 Z\" fill=\"#fff\" fill-opacity=\"0.12\"/><\/g>\n        <rect x=\"-3\" y=\"-26\" width=\"6\" height=\"38\" rx=\"2.5\" fill=\"#18181b\"/>\n        <circle cx=\"0\" cy=\"13\" r=\"5\" fill=\"#ea580c\"/>\n        <path d=\"M-3 -24 L-6.5 -42 Q-8.6 -62 -8 -82 Q-7.6 -91 0 -91 Q7.6 -91 8 -82 Q8.6 -62 6.5 -42 L3 -24 Z\" fill=\"#f97316\"/>\n        <path d=\"M-4.4 -78 Q-4.8 -60 -3.6 -44\" stroke=\"#fdba74\" stroke-width=\"2.4\" stroke-linecap=\"round\" fill=\"none\"/>\n        <path d=\"M-8.3 -77 L8.3 -77 M-7.9 -71 L7.9 -71\" stroke=\"#fff7ed\" stroke-width=\"2.2\" fill=\"none\"/>\n      <\/g>\n      <circle cx=\"145\" cy=\"112\" r=\"8\" fill=\"#111113\"/>\n      <circle cx=\"139\" cy=\"120\" r=\"8.5\" fill=\"#18181b\"/>\n      <path d=\"M134 116 q5 -2 9 2\" stroke=\"#3f3f46\" stroke-width=\"1.4\" stroke-linecap=\"round\" fill=\"none\"/>\n    <\/g>\n    <!-- head -->\n    <ellipse cx=\"78\" cy=\"68\" rx=\"26\" ry=\"23\" fill=\"#fcd5b0\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120 C96 120 112 104 107 71 C101 86 90 88 78 88 C66 88 55 86 49 71 Z\" fill=\"#f5f5f4\"/>\n    <path d=\"M49 71 C44 104 60 120 78 120\" stroke=\"#e4e4e7\" stroke-width=\"3\" stroke-linecap=\"round\" fill=\"none\" opacity=\".0\"/>\n    <path d=\"M70 90 Q78 99.5 86 90 Z\" fill=\"#7f1d1d\"/>\n    <ellipse cx=\"64\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(-12 64 83)\"/>\n    <ellipse cx=\"92\" cy=\"83\" rx=\"14\" ry=\"7\" fill=\"#fafafa\" transform=\"rotate(12 92 83)\"/>\n    <circle cx=\"78\" cy=\"79\" r=\"6.2\" fill=\"#f4978e\"/>\n    <circle cx=\"76.2\" cy=\"77\" r=\"1.8\" fill=\"#fff\" opacity=\".7\"/>\n    <circle cx=\"57.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <circle cx=\"98.5\" cy=\"77\" r=\"5.2\" fill=\"#fb7185\" opacity=\".5\"/>\n    <ellipse cx=\"68\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <ellipse cx=\"89\" cy=\"69\" rx=\"3\" ry=\"3.6\" fill=\"#18181b\"/>\n    <circle cx=\"69\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <circle cx=\"90\" cy=\"67.8\" r=\"1.1\" fill=\"#fff\"/>\n    <path d=\"M60.5 62.5 Q67 58.5 74 61.5 M82 61.5 Q89 58.5 96 62.5\" stroke=\"#fafafa\" stroke-width=\"4.2\" stroke-linecap=\"round\" fill=\"none\"/>\n    <!-- hat -->\n    <path d=\"M52 48 C46 24 62 7 82 7 C98 7 108 20 106 48 Z\" fill=\"#b91c1c\"/>\n    <path d=\"M52 48 C49 36 52 24 62 15 C55 28 58 38 62 48 Z\" fill=\"#991b1b\" opacity=\".0\"/>\n    <g class=\"santa-pom santa-rmstatic\">\n      <path d=\"M62 17 C46 8 28 17 28 38\" stroke=\"#b91c1c\" stroke-width=\"13\" stroke-linecap=\"round\" fill=\"none\"/>\n      <circle cx=\"28\" cy=\"42\" r=\"9\" fill=\"#fafafa\"/>\n    <\/g>\n    <rect x=\"46\" y=\"41\" width=\"64\" height=\"20\" rx=\"10\" fill=\"#f5f5f4\"/>\n    <rect x=\"46\" y=\"56\" width=\"64\" height=\"5\" rx=\"2.5\" fill=\"#f97316\"/>\n  <\/g>\n  <!-- ball + impact (outside the lean group so they stay put) -->\n  <g class=\"santa-ball santa-rmstatic\">\n    <circle cx=\"211\" cy=\"116\" r=\"8\" fill=\"#fafafa\"/>\n    <path d=\"M207.4 110 Q212 116 207.4 122 M214.6 110 Q210 116 214.6 122\" stroke=\"#b91c1c\" stroke-width=\"1.3\" stroke-linecap=\"round\" fill=\"none\"/>\n  <\/g>\n  <g class=\"santa-burst santa-rmstatic\">\n    <polygon points=\"214.0,95.0 217.1,106.6 227.4,100.6 221.4,110.9 233.0,114.0 221.4,117.1 227.4,127.4 217.1,121.4 214.0,133.0 210.9,121.4 200.6,127.4 206.6,117.1 195.0,114.0 206.6,110.9 200.6,100.6 210.9,106.6\" fill=\"#fde047\"/>\n    <polygon points=\"214.0,103.0 215.9,109.4 221.8,106.2 218.6,112.1 225.0,114.0 218.6,115.9 221.8,121.8 215.9,118.6 214.0,125.0 212.1,118.6 206.2,121.8 209.4,115.9 203.0,114.0 209.4,112.1 206.2,106.2 212.1,109.4\" fill=\"#fff\"/>\n  <\/g>\n<\/svg>";var svg=tmp.firstChild;el.parentNode.replaceChild(svg,el);})();
+</script>
+<style>
+.santa-rmstatic{animation:none!important}
+.pose .santa-bat.santa-rmstatic{transform:translate(138px,116px) rotate(74deg)}
+.pose .santa-arm.santa-rmstatic{transform:rotate(6deg)}
+.pose .santa-ball.santa-rmstatic{opacity:1;transform:none}
+.pose .santa-burst.santa-rmstatic,.pose .santa-swoosh.santa-rmstatic{opacity:0}
+.pose .santa-lean.santa-rmstatic{transform:none}
+.pose .santa-pom.santa-rmstatic{transform:none}
+</style>
+</body></html>
