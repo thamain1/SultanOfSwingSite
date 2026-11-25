@@ -51,6 +51,7 @@ Exit: all pass -> DONE. Stop: same failure after 2 fix attempts, anything out of
 ## Review log
 | Round | Reviewer (tool/model) | Scope reviewed | New findings (class: count) | Fixed in |
 |---|---|---|---|---|
+| 1 | code-reviewer (Claude), fresh context, reviewed cbbb264 | diff 7b8e163..cbbb264 | PASS; nits 3 (accessible-name-mismatch: fixed, label now starts with the visible "Shop the $350 deal"; snow-coverage: fall distance 1100px -> 1600px; focus-order: left as is, decoration) | planner fix commit after cbbb264 |
 
 ## Close-out (executor fills in)
 - **Summary:** Built to match the approved mockup (option A confirmed by Jesse 11/25, plus the two-handed grip change). New `src/components/Santa.tsx` (inline SVG, `Link` to `/order`, aria-label from `formatDollars(STAND_PROMO_PRICE)`) and `src/components/Snowfall.tsx` (50 CSS flakes, 25 on phones); both return null unless `isHolidayActive()`. Keyframes and layout CSS in `src/index.css` (outside Tailwind layers). Mounted only in the hero section of `src/pages/LandingPage.tsx` (3 lines + 2 imports). Both arms are two-bone chains (upper arm + forearm) animated with generated keyframes (1% steps) so both stacked gloves stay on the handle through the whole swing (max hand-to-glove error 0.31 user units across the timeline). Mockup updated to the same art: `mockups/holiday-santa.html`.

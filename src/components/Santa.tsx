@@ -11,7 +11,7 @@ export default function Santa() {
   if (!isHolidayActive()) return null;
   const deal = formatDollars(STAND_PROMO_PRICE);
   return (
-    <Link to="/order" className="santa-link" aria-label={`Shop the ${deal} holiday deal`} data-santa>
+    <Link to="/order" className="santa-link" aria-label={`Shop the ${deal} deal, holiday offer`} data-santa>
       <svg className="santa-svg" viewBox="0 0 250 200" aria-hidden="true" focusable="false">
         <defs><clipPath id="santa-body-clip"><ellipse cx="78" cy="128" rx="42" ry="40"/></clipPath></defs>
         <ellipse cx="82" cy="191" rx="50" ry="6" fill="#000" opacity=".4"/>

@@ -72,7 +72,7 @@
 
 .snowfall{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .snowfall i{position:absolute;top:-8px;left:var(--x);width:var(--s);height:var(--s);border-radius:9999px;background:#fff;opacity:var(--o);animation:snow-fall var(--d) linear var(--dl) infinite,snow-sway var(--sd) ease-in-out infinite alternate}
-@keyframes snow-fall{to{translate:var(--dx) 1100px}}
+@keyframes snow-fall{to{translate:var(--dx) 1600px}}
 @keyframes snow-sway{from{transform:translateX(calc(var(--sw) * -1))}to{transform:translateX(var(--sw))}}
 @media (max-width:767px){.snowfall i:nth-child(n+26){display:none}}
 @media (prefers-reduced-motion:reduce){.snowfall{display:none}.snowfall i{animation:none}}
