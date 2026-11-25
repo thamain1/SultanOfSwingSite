@@ -1,6 +1,6 @@
 # WO 0003: Scroll to top on page change
 
-**Status:** IN REVIEW
+**Status:** DONE (awaiting Jesse's push go)
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0002 (wo-0003-scroll-top, from main e121469)
 **Risk:** low (customer harm if it breaks: a page opens scrolled to the wrong place)
 **Executor:** planner (one-file fix; fresh reviewer checks it)
@@ -23,6 +23,7 @@ Jesse 2026-11-25: clicking SHOP NOW / ORDER NOW lower on the home page opens /or
 ## Review log
 | Round | Reviewer | Scope | Findings | Fixed in |
 |---|---|---|---|---|
+| 1 | code-reviewer (Claude Sonnet), fresh context, reviewed b7fe46f | main..b7fe46f | PASS; nits 3 (comment wording: fixed; logo click on / while scrolled: pre-existing, left; review log: filled) | next commit |
 
 ## Close-out
 - **Summary:** `src/components/ScrollToTop.tsx` (new) mounted in `src/App.tsx`; instant scroll to top on PUSH/REPLACE route changes, POP and #hash untouched.

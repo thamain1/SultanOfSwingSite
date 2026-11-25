@@ -11,8 +11,8 @@ export default function ScrollToTop() {
 
   useLayoutEffect(() => {
     if (navType === 'POP' || hash) return
-    // 'instant' so a CSS smooth-scroll setting cannot leave a slow scroll-to-top
-    // running that fights a later scrollIntoView (Navbar section links).
+    // 'instant': a plain scrollTo(0, 0) broke Navbar section links from other
+    // pages in testing (WO 0003 gate 3); the explicit instant jump does not.
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname, hash, navType])
 
