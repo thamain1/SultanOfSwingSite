@@ -82,6 +82,9 @@ Exit: items 1-8 pass, Status IN REVIEW -> DONE. Stop: same failure after 2 fix a
 - Payments on preview: create-payment-intent -> 500 "Payment service not configured" (no STRIPE_SECRET_KEY in Preview env) and the bundle has no publishable key (no pk_live, no pk_test), so Elements cannot render. Card/Affirm/Klarna and groupPackageCount against live FedEx are NOT yet verified.
 - Needed from Jesse: Preview env vars in CF Pages (Stripe TEST keys: VITE_STRIPE_PUBLISHABLE_KEY=pk_test, STRIPE_SECRET_KEY=sk_test; FedEx creds same as prod), then redeploy the preview.
 
+## Production go
+- Jesse 2026-11-25: "Just push everything to production." Preview payment checks skipped by Jesse; card/Affirm/Klarna and FedEx 2-box verified on production instead.
+
 ## Open (not blocking the build)
 - Rick: Christmas ship-by date (then a WO may add "order by" copy), rush shipping option.
 - Jesse: confirm in Stripe Dashboard that `STRIPE_WEBHOOK_SECRET` is set in CF Pages env (the webhook skips signature checks when it is unset) and that the order-email recipient in `webhook.ts` is still right.
