@@ -5,10 +5,12 @@ import VideosPage from './pages/VideosPage'
 import OrderConfirmation from './pages/OrderConfirmation'
 import PrivacyPage from './pages/PrivacyPage'
 import { CartProvider } from './lib/cart'
+import ScrollToTop from './components/ScrollToTop'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <CartProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
