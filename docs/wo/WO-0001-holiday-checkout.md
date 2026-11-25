@@ -12,8 +12,8 @@ Shoppers can pay by card or finance with **Affirm or Klarna**. The Shop page and
 that advertises the deal. Today the site is "call or email for pricing" with the checkout parked in `src/checkout/`.
 
 ## Decided (do not re-open)
-- **Stand price with PLATOS#1 = flat 35000 cents each** (not a percentage). Without the code: 49500 (SB-1000), 48950 (BB-2000). (Jesse, 11/25)
-- **Extras keep today's PLATOS#1 discounts:** pc-plate 10% off; sb-pk, bb-pk, bb-complete, sb-complete 20% off. Extras are separate items at current list prices. (Jesse, 11/25)
+- **Stand price with PLATOS#1 = flat 35000 cents each** (not a percentage). Without the code: 49500 (SB-1000) and **49500 (BB-2000, raised from 48950 by Rick via Jesse 2026-11-25)**. (Jesse, 11/25)
+- **SUPERSEDED 2026-11-25 (Rick via Jesse): PLATOS#1 discounts ONLY the two stands (35000 each). Plate, bungee/cable packs and Complete kits are ALWAYS full list price, code or not.** Old line kept for history: **Extras keep today's PLATOS#1 discounts:** pc-plate 10% off; sb-pk, bb-pk, bb-complete, sb-complete 20% off. Extras are separate items at current list prices. (Jesse, 11/25)
 - Code match stays case-insensitive (`toUpperCase()`), only `PLATOS#1` is valid.
 - The $350 code price does NOT expire; only the holiday *look* expires (see below).
 - **Payment options: Card, Affirm, Klarna.** Both are on in Stripe per Jesse. Mirror the existing Affirm pattern: Klarna is a third option button using `stripe.confirmKlarnaPayment(clientSecret, {payment_method: {billing_details: {name, email, address (country US)}}, return_url})`. Keep the server's `automatic_payment_methods[enabled]=true` (the path that was live before). Show Stripe's `PaymentMethodMessagingElement` for both affirm and klarna (monthly-payment messaging must come from the provider element, never hand-written APRs or "$X/mo" numbers).
