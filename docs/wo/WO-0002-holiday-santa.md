@@ -1,6 +1,6 @@
 # WO 0002: Front-page holiday Santa + hero snowfall
 
-**Status:** IN REVIEW
+**Status:** DONE
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0002 (wo-0002-holiday-santa, from main 7b8e163 + WO-0001 doc commits)
 **Risk:** low (customer harm if it breaks: the home page looks wrong or a decoration covers a button; no money, no data)
 **Executor:** update Status on start/finish; fill in the Close-out block.
@@ -47,6 +47,9 @@ links to the Shop. Holiday-only, switches off with the rest of the holiday look 
 8. Perf sanity: JS bundle growth reported (expected < 10 KB gzip); no new network requests on `/` (compare request lists before/after).
 9. Review: one fresh-context round (low risk), no open blocking/should-fix.
 Exit: all pass -> DONE. Stop: same failure after 2 fix attempts, anything out of scope, or the mockup stop.
+
+## Production go
+- Jesse 2026-11-25 (after viewing localhost preview): "let's go ahead and get that pushed."
 
 ## Review log
 | Round | Reviewer (tool/model) | Scope reviewed | New findings (class: count) | Fixed in |
