@@ -27,6 +27,7 @@ that advertises the deal. Today the site is "call or email for pricing" with the
 - Call / Email for Pricing buttons are replaced by Add to Cart (Jesse, 11/25). Phone + email stay on /order as a smaller "Questions? Call (818) 371-9006 or email ..." line (using `src/lib/contact.ts`).
 - Stand cards: full price struck through + "**$350 with code PLATOS#1**". Extra cards: list price (plain). Code box hint: "Have a code? Try PLATOS#1". Applied-promo label: "PLATOS#1 applied: stands $350".
 - Landing page gets one slim holiday strip linking to /order (social traffic lands there). Navbar/Landing "SHOP NOW" / "ORDER NOW" buttons unchanged.
+- **Each stand ships as its own FedEx box** (Jesse, 2026-11-25, added after build): the FedEx rate request sends one 52x14x14 / 32.5 lb package per stand unit (total stand qty across SB-1000 + BB-2000, e.g. `groupPackageCount` = stand qty or one requestedPackageLineItem per box). The zone fallback multiplies by stand qty. The sanity cap scales: max = $250 per stand box + USPS. USPS extras stay one medium flat-rate box (unchanged). Same shared function serves calculate-shipping and create-payment-intent. check-pricing.ts adds cases: 2 stands = 2x one-stand FedEx rate (stubbed FedEx must see 2 packages), 2 stands fallback = 2x zone, 1 stand + 1 plate = 1 FedEx box + USPS.
 - Rush/expedited shipping: OUT of scope (follow-up WO once Rick decides).
 
 ## Scope (facts from the planning search, main d603db5)
