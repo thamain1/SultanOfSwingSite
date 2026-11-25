@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { HolidayStrip } from '../components/Holiday'
+import Santa from '../components/Santa'
+import Snowfall from '../components/Snowfall'
 
 const oswald = { fontFamily: 'Oswald, sans-serif' }
 
@@ -48,6 +50,9 @@ export default function LandingPage() {
 
         {/* Orange accent line */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500" />
+
+        {/* Holiday snow (WO 0002): above the photo, below the content (content is z-10) */}
+        <Snowfall />
 
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto pt-20">
           <div className="flex justify-center mb-8">
@@ -107,6 +112,8 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Holiday Santa (WO 0002): hero corner, links to /order */}
+        <Santa />
       </section>
 
       {/* ── WHAT IT IMPROVES ── */}
