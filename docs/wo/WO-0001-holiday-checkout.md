@@ -85,6 +85,14 @@ Exit: items 1-8 pass, Status IN REVIEW -> DONE. Stop: same failure after 2 fix a
 ## Production go
 - Jesse 2026-11-25: "Just push everything to production." Preview payment checks skipped by Jesse; card/Affirm/Klarna and FedEx 2-box verified on production instead.
 
+## Production verification (2026-11-25, main 7b8e163)
+- CF Pages check-run success; live /order?cb=7b8e163 serves index-Cz4IN_Lp.js (pk_live present, PLATOS#1 x1, "for Pricing" x0).
+- FedEx live: 1 stand NY = 16792 "Real-time rate (1 box)"; 2 stands = 33584 "(2 boxes)" (exactly 2x, groupPackageCount accepted); stand+plate = 16792+1610.
+- Negative on prod: qty -5 -> 400 "Invalid quantity"; shippingTotal 1 -> 409 with server 16792; 10001+CA -> 400.
+- Live intents (created, never confirmed, no charge): SB-1000 + PLATOS#1 -> total 51792 (49500-14500+16792); BB-2000 + bb-complete + PLATOS#1 (klarna) -> 58402 (discount 14500 = stand only).
+- Live checkout UI (Playwright 1280, C:\Dev\.playwright-mcp\wo0001\live-checkout-1280.png): holiday banner, $495 struck / $350 with code on both stands, extras at list, payment choices Credit/Debit Card, Pay Monthly with Affirm, Pay with Klarna.
+- Not yet done: a real completed purchase (card/Affirm/Klarna) end to end + seller email; Jesse/Rick to place one and refund.
+
 ## Open (not blocking the build)
 - Rick: Christmas ship-by date (then a WO may add "order by" copy), rush shipping option.
 - Jesse: confirm in Stripe Dashboard that `STRIPE_WEBHOOK_SECRET` is set in CF Pages env (the webhook skips signature checks when it is unset) and that the order-email recipient in `webhook.ts` is still right.
