@@ -5,6 +5,8 @@ import { useCart } from "../lib/cart";
 import { PRICE_TABLE, PROMO_CODE, STAND_PROMO_PRICE, formatDollars, formatPrice } from "../lib/pricing";
 import { CheckoutSection } from "../checkout/Checkout";
 import Footer from "../components/Footer";
+import { HolidayBanner, HolidayRibbon } from "../components/Holiday";
+import { isHolidayActive } from "../../shared/holiday.ts";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -16,7 +18,9 @@ function ProductCard({ id, name, model, image, description, category }: Product)
   const hasPromoPrice = price.promoPrice !== undefined;
 
   return (
-    <div className="border border-white/10 bg-zinc-950 hover:border-orange-500/50 transition-all group flex flex-col">
+    <div className={`border bg-zinc-950 hover:border-orange-500/50 transition-all group flex flex-col ${
+      hasPromoPrice && isHolidayActive() ? "border-orange-500/50" : "border-white/10"
+    }`}>
       <div className="relative overflow-hidden bg-white">
         <img src={image} alt={name} className="w-full h-48 object-contain p-2 group-hover:scale-105 transition-transform duration-300" />
         {category === "main" && (
@@ -24,6 +28,7 @@ function ProductCard({ id, name, model, image, description, category }: Product)
             Main Unit
           </div>
         )}
+        {hasPromoPrice && <HolidayRibbon />}
       </div>
       <div className="p-4 flex flex-col flex-1">
         <p className="text-gray-500 text-[10px] tracking-widest uppercase">{model}</p>
@@ -77,6 +82,7 @@ export default function OrderPage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* ── SHOP SECTION ── */}
         <div className="mb-16">
+          <HolidayBanner />
           <p className="text-orange-500 text-xs tracking-[0.4em] uppercase mb-2" style={oswald}>OFFICIAL GEAR</p>
           <h1 style={oswald} className="text-4xl font-bold uppercase mb-2">SHOP</h1>
           <p className="text-gray-500 text-sm mb-6 tracking-widest">Browse our training equipment below</p>

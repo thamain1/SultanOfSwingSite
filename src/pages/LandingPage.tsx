@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { HolidayStrip } from '../components/Holiday'
 
 const oswald = { fontFamily: 'Oswald, sans-serif' }
 
@@ -31,6 +32,9 @@ export default function LandingPage() {
       <Navbar />
 
       {/* ── HERO ── */}
+      {/* Holiday strip (WO 0001): in flow under the fixed navbar, removes itself after HOLIDAY_END */}
+      <HolidayStrip />
+
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">

@@ -4,6 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Holiday snowfall (WO 0001). Decorative only; off for reduced-motion. */
+.holiday-snow i {
+  position: absolute;
+  top: -10px;
+  border-radius: 9999px;
+  background: #fff;
+  opacity: 0.75;
+  animation: holiday-fall linear infinite;
+}
+@keyframes holiday-fall {
+  to { transform: translateY(260px) translateX(18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .holiday-snow { display: none; }
+}
+
 @layer base {
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {

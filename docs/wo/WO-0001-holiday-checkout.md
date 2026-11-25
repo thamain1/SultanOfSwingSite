@@ -1,6 +1,6 @@
 # WO 0001: Holiday checkout: $350 stands with PLATOS#1, Affirm + Klarna, Christmas shop
 
-**Status:** IN PROGRESS (Gate approved by Jesse 2026-11-25)
+**Status:** IN REVIEW (Gate approved by Jesse 2026-11-25; mockup approved by Jesse 2026-11-25)
 **Repo / branch:** C:\Dev\sultanofswing-site-wo0001 (wo-0001-holiday-checkout, from main d603db5)
 **Risk:** high (customer harm if it breaks: a customer is charged the wrong amount, or a shopper can pay less than the price by editing the request; live Stripe money)
 **Executor:** update Status on start/finish; fill in the Close-out block.
@@ -81,10 +81,25 @@ Exit: items 1-8 pass, Status IN REVIEW -> DONE. Stop: same failure after 2 fix a
 |---|---|---|---|---|
 
 ## Close-out (executor fills in)
-- **Summary:**
+- **Summary:** Online ordering is back on, priced from one shared module. Commits on `wo-0001-holiday-checkout`: `62457aa` (shared/pricing.ts, server shipping + qty/shipping holes closed, checkout re-enabled with Klarna, check script, mockup) and the holiday-visuals commit that follows it (banner, landing strip, stand ribbons, snowfall, matching the approved mockup). Not pushed. No PaymentIntent created or confirmed (the check script uses a stubbed fetch and a fake key).
 - **Gate results:**
-- **Review:**
+  1. `npm ci` ok (250 packages). `npm run build` exit 0 (63 -> 65 modules, bundle index-*.js ~300 kB). `npm run lint`: exit 1 with exactly the 2 pre-existing errors, 0 new: `functions/api/webhook.ts:105 'shipEmail' unused` and `src/lib/cart.tsx:126 react-refresh/only-export-components` (the `useCart` export, unchanged). Also `npx tsc -p functions/tsconfig.json` exit 0 (added `allowImportingTsExtensions` there).
+  2. `node --experimental-strip-types scripts/check-pricing.ts`: **71 checks passed, 0 failed** (gate asked >= 14). Covers every case listed in the gate (amounts, lowercase code, wrong code, x2+x1 = 105000+S, stand+plate+pack = 35000+4050+3880+S, extras-only 4000+S, client total == server total for 12 carts, qty -5/0/1.5/21/"2"/null -> 400 and 0 Stripe calls, unknown id and `__proto__` -> 400, extra client price fields ignored, shippingTotal 1/0/missing/string/too high -> 409 with server shipping and 0 Stripe calls, FedEx down -> zone fallback identical in calculate-shipping and create-payment-intent for CA 8000 / TX 12500 / NY 15000). Reproduced the two holes on old main first (old handler, stubbed fetch): qty -5 plate charged 42000 for a 49500 stand; shippingTotal 1 charged 49501. Both now return 400 / 409 with no Stripe call.
+  3. Routes: `find functions shared scripts` -> functions/_shared/shipping.ts, functions/api/{calculate-shipping,create-payment-intent,webhook}.ts, shared/{pricing,holiday}.ts. After the final build `grep "^export .*onRequest" functions` finds 3 hits, all in functions/api/*.ts; 0 outside functions/api.
+  4. Copy: `grep -riE "arrive|in time for|by christmas|by dec|delivered by" src shared dist/assets` -> 0 matches. `grep -c "PLATOS#1" dist/assets/index-*.js` = 1 (the count is lines; one minified line). "for Pricing" in bundle = 0 (also 0 for "call for pricing|email for pricing"); "Questions? Call" = 1; no em dash in new copy.
+  5. Holiday switch: 5 checks in check-pricing: ON 2026-12-24, ON 2027-01-01T07:59:59Z, OFF 2027-01-01T08:00:00Z, OFF 09:00Z, HOLIDAY_END = 2027-01-01T08:00:00.000Z (midnight Pacific).
+  6. UI preservation (Playwright, vite preview of main d603db5 vs the branch build, pk from the main checkout's env dir via Vite envDir, never printed or copied; no details entered). Screenshots in `C:\Dev\.playwright-mcp\wo0001\` (26 files): before-/after- home, order, confirm at 390 and 1280 (full page); after-order-cart (stand + plate + PLATOS#1: subtotal $540.00, discount -$149.50, total $390.50 before shipping) at 390 and 1280; after-payment-card/affirm/klarna at 390 and 1280 (Elements iframes rendered, 0 console errors); after-order-reduced-motion-1280. Reduced motion: `.holiday-snow` computed display = none (22 flakes, animation holiday-fall, display block when motion allowed). Landing strip sits in flow under the fixed navbar: strip bottom 121px vs hero logo top 229px at 390 (no overlap; first version overlapped the logo and was fixed). Element inventory (visible a/button/h1-h4/p/img/input/select/label/li, deduped; sample sizes before/after): `/` 390: 67/68, 1280: 70/71, only change = added "SHOP NOW" strip link, 0 removed. `/order` 390 and 1280: 49 before, 45 kept, 4 removed = "CALL FOR PRICING" button, "EMAIL FOR PRICING" button, "CALL OR EMAIL FOR PRICING" heading, the call-or-email paragraph (Jesse's decision; phone and email survive as the "Questions? Call (818) 371-9006 or email ..." line and the unchanged top-bar phone link); added 13 (Add to Cart x7, price lines, banner, contact line). `/order/confirmation?redirect_status=succeeded`: 14/14, 0 changed. The cart/checkout states have no "before" because checkout was dormant on main (n/a).
+  7. Mockup stop: `mockups/holiday-shop.html` built and shown; Jesse approved 2026-11-25 ("Mock-up looks good. Roll with it."), relayed by the planning session; app wired to match.
+  8. Review: pending (this hand-off).
+- **Review:** not started. Round 1 should review the whole change against base d603db5 (high effort; Codex second reviewer preferred per Risk).
 - **Decisions I'm NOT confident about:**
+  - The Card panel's Stripe PaymentElement shows Stripe's own Bank/Affirm/Klarna tabs (plus Link) because Elements `paymentMethodTypes` lists card, affirm, klarna as the WO says; the mockup shows a plain card form. Alternative: `["card"]` only, but I could not prove the card confirm still matches the intent without creating one, so step 9 on the preview should check both.
+  - `shippingTotal` missing or not a number is a 409 (shopper must see shipping first). Alternative: treat missing as "use server number", which breaks the never-charge-an-unseen-total rule.
+  - Existing behaviour kept: FedEx is quoted as ONE package regardless of how many stands are in the cart (two stands ship at one-box price). Out of scope here; Rick/Jesse should decide before volume orders.
+  - Stripe's messaging element renders blank (reserved 48px height) at some totals (seen at $495, text shown at $390.50); it is Stripe-controlled, wrapped in QuietBoundary.
 - **Proposed learned rules:**
-- **Blockers:**
-- **Next action:**
+  - [price-single-source] Prices, promo rules and cart math live in one pure module imported by both the cart and the payment function; a check script fails if a price literal appears outside it. (source: WO 0001, 2026-11-25)
+  - [client-number-is-a-check] A money amount sent by the client (shipping, total) is only compared with the server's own number and answered with 409 plus the server value on mismatch; it is never used to set the charge. (source: WO 0001, 2026-11-25)
+  - [qty-bounds] Any quantity from a request is validated as an integer in a stated range before it multiplies a price; negative and fractional values are test cases. (source: WO 0001, 2026-11-25)
+- **Blockers:** none.
+- **Next action:** planning session dispatches the fresh `code-reviewer` (round 1, whole change vs d603db5). After review passes and Jesse says push: item 9 (preview intents per method, merge, live hash check).
