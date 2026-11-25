@@ -1,4 +1,4 @@
-import { PROMO_CODE, isValidPromoCode, priceCart, validateItems } from "../../shared/pricing.ts";
+import { PROMO_CODE, isValidPromoCode, priceCart, validateDestination, validateItems } from "../../shared/pricing.ts";
 import { quoteShipping, type ShippingEnv } from "../_shared/shipping.ts";
 
 interface Env extends ShippingEnv {
@@ -13,8 +13,17 @@ interface ShippingAddress {
   zip: string;
 }
 
+// Free-text fields from the form: bounded so one request cannot overflow Stripe's
+// 500-character metadata limit or smuggle a huge value into the order email.
+const MAX_FIELD_LENGTH = 200;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function isNonEmptyString(v: unknown): v is string {
-  return typeof v === "string" && v.trim().length > 0;
+  return typeof v === "string" && v.trim().length > 0 && v.length <= MAX_FIELD_LENGTH;
+}
+
+function isEmail(v: unknown): v is string {
+  return typeof v === "string" && v.length <= 254 && EMAIL_PATTERN.test(v.trim());
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -51,18 +60,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       !isNonEmptyString(shipping.name) ||
       !isNonEmptyString(shipping.address) ||
       !isNonEmptyString(shipping.city) ||
-      !isNonEmptyString(shipping.state) ||
-      !isNonEmptyString(shipping.zip) ||
-      !isNonEmptyString(email)
+      !isEmail(email)
     ) {
-      return Response.json({ error: "Missing contact or shipping details" }, { status: 400 });
+      return Response.json({ error: "Please check your name, email and address." }, { status: 400 });
+    }
+    if (phone !== undefined && phone !== null && phone !== "" && (typeof phone !== "string" || phone.length > 40)) {
+      return Response.json({ error: "Please check your phone number." }, { status: 400 });
+    }
+
+    // State must be a real state (or DC), ZIP must be 5 or 9 digits, and the ZIP
+    // must belong to that state. 400 before any Stripe call.
+    const dest = validateDestination(shipping.zip, shipping.state);
+    if (!dest.ok) {
+      return Response.json({ error: dest.error }, { status: 400 });
     }
 
     // Shipping is computed here from items + destination (same function as the
     // quote the shopper sees). The client's number is only a check: if it is not
     // exactly what the server computed, return 409 with the server's number and
     // charge nothing, so the shopper is never charged a total they did not see.
-    const quote = await quoteShipping(context.env, items, { zip: shipping.zip, state: shipping.state });
+    const quote = await quoteShipping(context.env, items, dest);
     const shippingCost = quote.total;
     if (shippingTotal !== shippingCost) {
       return Response.json(
@@ -94,8 +111,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     params.append("shipping[name]", shipping.name);
     params.append("shipping[address][line1]", shipping.address);
     params.append("shipping[address][city]", shipping.city);
-    params.append("shipping[address][state]", shipping.state);
-    params.append("shipping[address][postal_code]", shipping.zip);
+    params.append("shipping[address][state]", dest.state);
+    params.append("shipping[address][postal_code]", dest.zip);
     params.append("shipping[address][country]", "US");
     params.append("automatic_payment_methods[enabled]", "true");
     params.append("metadata[items]", JSON.stringify(items));
@@ -108,8 +125,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     params.append("metadata[ship_name]",    shipping.name);
     params.append("metadata[ship_line1]",   shipping.address);
     params.append("metadata[ship_city]",    shipping.city);
-    params.append("metadata[ship_state]",   shipping.state);
-    params.append("metadata[ship_zip]",     shipping.zip);
+    params.append("metadata[ship_state]",   dest.state);
+    params.append("metadata[ship_zip]",     dest.zip);
     params.append("metadata[ship_country]", "US");
     params.append("metadata[ship_email]",   email);
     if (isNonEmptyString(phone)) params.append("metadata[ship_phone]", phone);

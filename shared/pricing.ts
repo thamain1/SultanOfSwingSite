@@ -42,6 +42,63 @@ export const PROMO_DISCOUNTS: Record<PromoTier, number> = {
 
 export const MAX_QTY_PER_ITEM = 20;
 
+/** Sanity ceiling for one FedEx stand box (cents). A live rate above this per box is rejected. */
+export const FEDEX_MAX_PER_BOX = 25000;
+
+/** Number of FedEx boxes in a cart: each stand ships as its own box. */
+export function standBoxCount(items: LineItem[]): number {
+  return items.reduce((sum, i) => sum + (isLargeItem(i.id) ? i.qty : 0), 0);
+}
+
+// ---- destination validation -------------------------------------------------
+
+/** First ZIP digits the USPS assigns to each state (50 states + DC). Territories are out of scope. */
+const STATE_ZIP_FIRST_DIGITS: Record<string, string> = {
+  CT: "0", MA: "0", ME: "0", NH: "0", NJ: "0", RI: "0", VT: "0",
+  DE: "1", PA: "1",
+  NY: "01", // Holtsville / Fishers Island ZIPs begin with 0
+  DC: "2", MD: "2", NC: "2", SC: "2", VA: "2", WV: "2",
+  AL: "3", FL: "3", GA: "3", MS: "3", TN: "3",
+  IN: "4", KY: "4", MI: "4", OH: "4",
+  IA: "5", MN: "5", MT: "5", ND: "5", SD: "5", WI: "5",
+  IL: "6", KS: "6", MO: "6", NE: "6",
+  AR: "7", LA: "7", OK: "7",
+  TX: "78", // El Paso ZIPs begin with 8
+  AZ: "8", CO: "8", ID: "8", NM: "8", NV: "8", UT: "8", WY: "8",
+  AK: "9", CA: "9", HI: "9", OR: "9", WA: "9",
+};
+
+export const US_STATE_CODES: string[] = Object.keys(STATE_ZIP_FIRST_DIGITS);
+
+export function isValidZip(zip: unknown): zip is string {
+  return typeof zip === "string" && /^\d{5}(-\d{4})?$/.test(zip.trim());
+}
+
+export function isValidStateCode(state: unknown): state is string {
+  return typeof state === "string" && Object.prototype.hasOwnProperty.call(STATE_ZIP_FIRST_DIGITS, state.trim().toUpperCase());
+}
+
+/** True when the ZIP's first digit is one the USPS assigns to the state. */
+export function zipMatchesState(zip: string, state: string): boolean {
+  const digits = STATE_ZIP_FIRST_DIGITS[state.trim().toUpperCase()];
+  const first = zip.trim().charAt(0);
+  return digits !== undefined && first !== "" && digits.includes(first);
+}
+
+export type DestinationResult =
+  | { ok: true; zip: string; state: string }
+  | { ok: false; error: string };
+
+/** Validate and normalise a shipping destination from an untrusted request. */
+export function validateDestination(zip: unknown, state: unknown): DestinationResult {
+  if (!isValidStateCode(state)) return { ok: false, error: "Please choose a valid state." };
+  if (!isValidZip(zip)) return { ok: false, error: "Please enter a valid 5-digit ZIP code." };
+  const s = state.trim().toUpperCase();
+  const z = zip.trim();
+  if (!zipMatchesState(z, s)) return { ok: false, error: "That ZIP code does not match the state you chose." };
+  return { ok: true, zip: z, state: s };
+}
+
 /** USPS Flat Rate box prices (cents), updated annually in January. */
 export const USPS_RATES = {
   small: 1040,
@@ -78,9 +135,9 @@ export function isLargeItem(id: string): boolean {
   return PRICE_TABLE[id]?.shippingType === "fedex";
 }
 
-/** Case-insensitive match; only PROMO_CODE is valid. Accepts any input. */
+/** Case-insensitive, surrounding spaces ignored; only PROMO_CODE is valid. Accepts any input. */
 export function isValidPromoCode(code: unknown): boolean {
-  return typeof code === "string" && code.toUpperCase() === PROMO_CODE;
+  return typeof code === "string" && code.trim().toUpperCase() === PROMO_CODE;
 }
 
 export type ItemsResult =

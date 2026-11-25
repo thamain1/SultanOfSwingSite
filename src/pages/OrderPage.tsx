@@ -12,7 +12,7 @@ const oswald = { fontFamily: "Oswald, sans-serif" };
 
 /* ─── Product Card ─── */
 function ProductCard({ id, name, model, image, description, category }: Product) {
-  const { addItem, items } = useCart();
+  const { addItem, items, locked } = useCart();
   const price = PRICE_TABLE[id];
   const inCart = items.find((i) => i.product.id === id)?.qty ?? 0;
   const hasPromoPrice = price.promoPrice !== undefined;
@@ -48,8 +48,9 @@ function ProductCard({ id, name, model, image, description, category }: Product)
           <button
             type="button"
             onClick={() => addItem(id)}
+            disabled={locked}
             style={oswald}
-            className="block w-full text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 bg-orange-500 hover:bg-orange-600 hover:border-orange-600 text-white"
+            className="block w-full text-center px-4 py-2 text-sm tracking-widest uppercase transition-all border border-orange-500 bg-orange-500 hover:bg-orange-600 hover:border-orange-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add to Cart
           </button>

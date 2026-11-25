@@ -9,8 +9,12 @@ export {
   USPS_RATES,
   isLargeItem,
   isValidPromoCode,
+  isValidStateCode,
+  isValidZip,
   priceCart,
   unitPrice,
+  validateItems,
+  zipMatchesState,
 } from "../../shared/pricing.ts";
 
 export function formatPrice(cents: number): string {

@@ -1,4 +1,4 @@
-import { validateItems } from "../../shared/pricing.ts";
+import { validateDestination, validateItems } from "../../shared/pricing.ts";
 import { quoteShipping, type ShippingEnv } from "../_shared/shipping.ts";
 
 interface ShipRequest {
@@ -11,8 +11,9 @@ export const onRequestPost: PagesFunction<ShippingEnv> = async (context) => {
     const body = await context.request.json() as ShipRequest;
     const { items, destination } = body;
 
-    if (!destination?.zip) {
-      return Response.json({ error: "Missing items or destination" }, { status: 400 });
+    const dest = validateDestination(destination?.zip, destination?.state);
+    if (!dest.ok) {
+      return Response.json({ error: dest.error }, { status: 400 });
     }
 
     const valid = validateItems(items);
@@ -20,7 +21,7 @@ export const onRequestPost: PagesFunction<ShippingEnv> = async (context) => {
       return Response.json({ error: valid.error }, { status: 400 });
     }
 
-    const quote = await quoteShipping(context.env, valid.items, destination);
+    const quote = await quoteShipping(context.env, valid.items, dest);
     return Response.json({ total: quote.total, breakdown: quote.breakdown });
   } catch {
     return Response.json({ error: "Failed to calculate shipping" }, { status: 500 });

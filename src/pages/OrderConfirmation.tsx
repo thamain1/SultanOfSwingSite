@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useCart } from "../lib/cart";
+import { SALES_PHONE } from "../lib/contact";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
@@ -10,7 +11,12 @@ export default function OrderConfirmation() {
   const paymentIntent = params.get("payment_intent");
   const status = params.get("redirect_status");
 
+  // Stripe's redirect_status: succeeded | processing | failed | requires_payment_method.
+  // Only a failed attempt may say "no charges were made"; a processing payment may
+  // still complete, and a missing or unknown status says nothing about charges.
   const isSuccess = status === "succeeded";
+  const isProcessing = status === "processing";
+  const isFailed = status === "failed" || status === "requires_payment_method" || status === "canceled";
 
   // Empty the cart once the order is confirmed.
   const { clearCart } = useCart();
@@ -62,6 +68,53 @@ export default function OrderConfirmation() {
                 SHOP MORE
               </Link>
             </div>
+          </>
+        ) : isProcessing ? (
+          <>
+            <div className="text-6xl mb-6">&#9203;</div>
+            <h1 style={oswald} className="text-5xl font-bold uppercase mb-4">
+              PAYMENT <span className="text-orange-500">PROCESSING</span>
+            </h1>
+            <p className="text-gray-400 text-lg mb-2">
+              Your payment is processing. We&apos;ll email you once it is confirmed.
+            </p>
+            <p className="text-gray-500 text-sm mb-8">
+              You do not need to place the order again.
+            </p>
+            {paymentIntent && (
+              <p className="text-gray-600 text-xs mb-8 font-mono">
+                Order Reference: {paymentIntent}
+              </p>
+            )}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/"
+                style={oswald}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase transition-all hover:scale-105"
+              >
+                BACK TO HOME
+              </Link>
+            </div>
+          </>
+        ) : !isFailed ? (
+          <>
+            <h1 style={oswald} className="text-4xl font-bold uppercase mb-4">
+              PAYMENT <span className="text-orange-500">STATUS</span>
+            </h1>
+            <p className="text-gray-400 text-lg mb-2">
+              We could not confirm the status of your payment.
+            </p>
+            <p className="text-gray-500 text-sm mb-8">
+              If you were charged, you will receive an email from us. Questions? Call{" "}
+              <a href={`tel:${SALES_PHONE.tel}`} className="text-orange-500">{SALES_PHONE.display}</a>.
+            </p>
+            <Link
+              to="/order"
+              style={oswald}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-10 py-4 text-lg tracking-widest uppercase transition-all hover:scale-105 inline-block"
+            >
+              BACK TO SHOP
+            </Link>
           </>
         ) : (
           <>

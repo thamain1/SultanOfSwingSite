@@ -15,13 +15,24 @@ import {
 } from "@stripe/react-stripe-js";
 import { stripePromise } from "../lib/stripe";
 import { useCart } from "../lib/cart";
-import { PROMO_CODE, formatPrice, unitPrice } from "../lib/pricing";
+import { PROMO_CODE, formatPrice, isValidStateCode, isValidZip, unitPrice, zipMatchesState } from "../lib/pricing";
 
 const oswald = { fontFamily: "Oswald, sans-serif" };
 
 // Affirm supports USD transactions from $35.00 to $30,000.00.
 // Below the floor Stripe rejects the PaymentIntent, so don't offer it.
 const AFFIRM_MIN_CENTS = 3500;
+
+// Stripe error codes meaning "Klarna cannot be used for this order". Any other
+// Klarna error (network, validation) shows its real message and keeps Klarna selected.
+const KLARNA_UNAVAILABLE_CODES = new Set([
+  "payment_method_not_available",
+  "payment_method_provider_decline",
+  "payment_method_unactivated",
+  "payment_method_currency_mismatch",
+  "amount_too_small",
+  "amount_too_large",
+]);
 
 /* ─── Failure-isolating boundary ───
    The Affirm / Klarna promo messaging is a nice-to-have. If Stripe.js throws while
@@ -66,7 +77,7 @@ function PaymentMessaging({ amount }: { amount: number }) {
 function CartSummary() {
   const {
     items, updateQty, removeItem, subtotal, discount, shippingCost,
-    total, promoCode, setPromoCode, appliedPromo, hasLargeItem,
+    total, promoCode, setPromoCode, appliedPromo, hasLargeItem, locked,
   } = useCart();
 
   return (
@@ -93,13 +104,13 @@ function CartSummary() {
                     {formatPrice(unitPrice(product.id, appliedPromo !== null))}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <button onClick={() => updateQty(product.id, qty - 1)}
-                      className="w-6 h-6 border border-white/20 text-white text-xs hover:border-orange-500 transition-colors flex items-center justify-center">−</button>
+                    <button onClick={() => updateQty(product.id, qty - 1)} disabled={locked} aria-label={`Decrease ${product.name}`}
+                      className="w-6 h-6 border border-white/20 text-white text-xs hover:border-orange-500 transition-colors flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed">−</button>
                     <span className="text-white text-sm w-4 text-center">{qty}</span>
-                    <button onClick={() => updateQty(product.id, qty + 1)}
-                      className="w-6 h-6 border border-white/20 text-white text-xs hover:border-orange-500 transition-colors flex items-center justify-center">+</button>
-                    <button onClick={() => removeItem(product.id)}
-                      className="text-gray-600 hover:text-red-400 text-xs ml-auto transition-colors">Remove</button>
+                    <button onClick={() => updateQty(product.id, qty + 1)} disabled={locked} aria-label={`Increase ${product.name}`}
+                      className="w-6 h-6 border border-white/20 text-white text-xs hover:border-orange-500 transition-colors flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed">+</button>
+                    <button onClick={() => removeItem(product.id)} disabled={locked}
+                      className="text-gray-600 hover:text-red-400 text-xs ml-auto transition-colors disabled:opacity-40 disabled:cursor-not-allowed">Remove</button>
                   </div>
                 </div>
               </div>
@@ -114,6 +125,7 @@ function CartSummary() {
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder="Enter code"
               autoComplete="off"
+              disabled={locked}
               className="w-full bg-zinc-900 border border-white/10 focus:border-orange-500 text-white px-3 py-2 text-sm outline-none transition-colors"
             />
             {appliedPromo ? (
@@ -173,9 +185,12 @@ function CartSummary() {
 function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const { total, items, subtotal, discount, shippingCost, promoCode, setShippingCost, hasLargeItem } = useCart();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { total, items, shippingCost, promoCode, setShippingCost, hasLargeItem, locked, setLocked, subtotal, discount } = useCart();
+  const isProcessing = locked; // the cart is frozen while a payment is being created or confirmed
+  const setIsProcessing = setLocked;
   const [error, setError] = useState<string | null>(null);
+  // The destination key whose shipping quote failed (shown with a Retry button).
+  const [quoteFailedKey, setQuoteFailedKey] = useState("");
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<"card" | "affirm" | "klarna">("card");
   const lastQuoteKeyRef = useRef("");
 
@@ -195,14 +210,37 @@ function CheckoutForm() {
   const paymentMethod =
     paymentMethodChoice === "affirm" && !affirmEligible ? "card" : paymentMethodChoice;
 
-  // Fetch FedEx shipping rate when ZIP + state are filled for large items
+  // Coming back from an Affirm / Klarna page with the browser Back button can restore
+  // this page from the back-forward cache mid-payment: unfreeze the cart and form.
   useEffect(() => {
-    if (!hasLargeItem || form.zip.length < 5 || !form.state) return;
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setLocked(false);
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, [setLocked]);
+
+  // Large items need a FedEx quote for this ZIP + state + cart.
+  const zipTrim = form.zip.trim();
+  const destinationValid = isValidStateCode(form.state) && isValidZip(zipTrim) && zipMatchesState(zipTrim, form.state);
+  const quoteKey = `${zipTrim}|${form.state}|${items.map((i) => `${i.product.id}x${i.qty}`).join(",")}`;
+  const quoteFailed = hasLargeItem && destinationValid && quoteFailedKey === quoteKey;
+  const quoteLoading = hasLargeItem && destinationValid && shippingCost === null && !quoteFailed;
+
+  useEffect(() => {
+    if (!hasLargeItem) return;
+    if (!destinationValid) {
+      // ZIP or state is no longer usable: forget the quote so a stale number is never shown or sent.
+      if (lastQuoteKeyRef.current !== "") {
+        lastQuoteKeyRef.current = "";
+        setShippingCost(null);
+      }
+      return;
+    }
     // Re-quote when the destination OR the cart changes (a cart edit clears the
-    // shown shipping, so the same ZIP must be quoted again).
-    const quoteKey = `${form.zip}|${form.state}|${items.map((i) => `${i.product.id}x${i.qty}`).join(",")}`;
-    if (quoteKey === lastQuoteKeyRef.current) return;
-    lastQuoteKeyRef.current = quoteKey;
+    // shown shipping, so the same ZIP must be quoted again). A key is remembered
+    // only after a successful quote, so a cancelled or failed request is retried.
+    if ((quoteKey === lastQuoteKeyRef.current && shippingCost !== null) || quoteKey === quoteFailedKey) return;
 
     const controller = new AbortController();
     fetch("/api/calculate-shipping", {
@@ -210,24 +248,36 @@ function CheckoutForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         items: items.map((i) => ({ id: i.product.id, qty: i.qty })),
-        destination: { zip: form.zip, state: form.state },
+        destination: { zip: zipTrim, state: form.state },
       }),
       signal: controller.signal,
     })
-      .then((res) => res.json())
-      .then((data: { total?: number }) => {
-        if (typeof data.total === "number") {
-          setShippingCost(data.total);
-        }
+      .then(async (res) => {
+        const data = (await res.json()) as { total?: unknown };
+        if (!res.ok || typeof data.total !== "number") throw new Error("quote failed");
+        return data.total;
       })
-      .catch(() => {});
+      .then((quoted) => {
+        lastQuoteKeyRef.current = quoteKey;
+        setQuoteFailedKey("");
+        setShippingCost(quoted);
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return; // superseded by a newer quote: do not flag an error
+        lastQuoteKeyRef.current = "";
+        setQuoteFailedKey(quoteKey);
+      });
 
     return () => controller.abort();
-  }, [form.zip, form.state, hasLargeItem, items, setShippingCost]);
+  }, [quoteKey, quoteFailedKey, destinationValid, hasLargeItem, items, zipTrim, form.state, shippingCost, setShippingCost]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || isProcessing) return;
+    if (!destinationValid) {
+      setError("Please enter a valid ZIP code and state. The ZIP code must belong to the state you chose.");
+      return;
+    }
     setIsProcessing(true);
     setError(null);
 
@@ -253,7 +303,7 @@ function CheckoutForm() {
             address: form.address,
             city: form.city,
             state: form.state,
-            zip: form.zip,
+            zip: zipTrim,
           },
           email: form.email,
           phone: form.phone,
@@ -326,8 +376,8 @@ function CheckoutForm() {
             });
 
       if (stripeError) {
-        if (paymentMethod === "klarna") {
-          // Stripe declined Klarna for this order: send the shopper back to card.
+        if (paymentMethod === "klarna" && stripeError.code && KLARNA_UNAVAILABLE_CODES.has(stripeError.code)) {
+          // Stripe says Klarna cannot take this order (not eligible or declined): send the shopper back to card.
           setPaymentMethodChoice("card");
           setError(
             `${stripeError.message || "Klarna is not available for this order."} You can pay by card or Affirm instead.`,
@@ -344,7 +394,9 @@ function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit}>
+      {/* Frozen while a payment is being created or confirmed (the cart is locked too). */}
+      <fieldset disabled={isProcessing} className="space-y-8 min-w-0">
       {/* Contact */}
       <div>
         <h2 style={oswald} className="text-lg font-bold uppercase tracking-widest border-b border-white/10 pb-3 mb-5">
@@ -488,6 +540,7 @@ function CheckoutForm() {
               options={{
                 layout: "tabs",
                 paymentMethodOrder: ["card"],
+                wallets: { link: "never" },
                 defaultValues: {
                   billingDetails: {
                     name: `${form.firstName} ${form.lastName}`,
@@ -556,7 +609,26 @@ function CheckoutForm() {
         <div className="flex justify-between text-sm text-gray-400">
           <span>Shipping</span>
           {shippingCost === null ? (
-            <span className="text-amber-400 text-xs">Enter ZIP above to calculate</span>
+            quoteFailed ? (
+              <span className="text-red-400 text-xs text-right">
+                Couldn&apos;t get shipping.{" "}
+                <button
+                  type="button"
+                  onClick={() => setQuoteFailedKey("")}
+                  className="text-orange-500 hover:text-orange-400 underline tracking-widest uppercase"
+                >
+                  Retry
+                </button>
+              </span>
+            ) : quoteLoading ? (
+              <span className="text-amber-400 text-xs">Calculating shipping...</span>
+            ) : (
+              <span className="text-amber-400 text-xs">
+                {hasLargeItem && (form.zip || form.state) && !destinationValid
+                  ? "Enter a valid ZIP and state"
+                  : "Enter ZIP above to calculate"}
+              </span>
+            )
           ) : (
             <span className="text-white">{shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}</span>
           )}
@@ -582,13 +654,18 @@ function CheckoutForm() {
         {isProcessing
           ? "PROCESSING..."
           : shippingCost === null && hasLargeItem
-          ? "ENTER ZIP TO CONTINUE"
+          ? quoteLoading
+            ? "CALCULATING SHIPPING..."
+            : quoteFailed
+            ? "SHIPPING QUOTE NEEDED"
+            : "ENTER ZIP TO CONTINUE"
           : `PLACE ORDER — ${formatPrice(total)}`}
       </button>
 
       <p className="text-gray-600 text-xs text-center tracking-wide">
         Your payment info is encrypted and secure. We never store card details.
       </p>
+      </fieldset>
     </form>
   );
 }
@@ -625,7 +702,10 @@ export function CheckoutSection() {
                     fontFamily: "Inter, sans-serif",
                   },
                 },
-                paymentMethodTypes: ["card", "affirm", "klarna"],
+                // The card panel shows cards only. Affirm and Klarna use their own
+                // confirm calls on the server-created intent; their messaging
+                // lives in a separate Elements group (PaymentMessaging).
+                paymentMethodTypes: ["card"],
               }}
             >
               <CheckoutForm />
